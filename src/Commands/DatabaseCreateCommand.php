@@ -42,7 +42,7 @@ class DatabaseCreateCommand extends Command
         $connectionName = config('database.default');
         $connection = config('database.connections')[$connectionName];
         $schemaName = $connection['database'];
-        if (!$schemaName) {
+        if (empty($schemaName)) {
             throw new InvalidArgumentException('Missing Database Name');
         }
         $query = sprintf(
