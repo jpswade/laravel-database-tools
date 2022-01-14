@@ -9,7 +9,7 @@ use Illuminate\Support\Facades\Storage;
 
 class DatabaseGetCommand extends Command
 {
-    /** @var string @see https://github.com/spatie/laravel-backup/blob/main/src/Tasks/Backup/BackupJob.php#L270 */
+    /** @var string @see https://github.com/spatie/laravel-backup/blob/11eb9f82bc0bd25ec69f5c169dde07290d913ce8/src/Tasks/Backup/BackupJob.php#L270 */
     public const DB_DUMPS_DIRECTORY = 'db-dumps';
 
     /**
