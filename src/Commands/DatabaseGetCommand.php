@@ -9,6 +9,9 @@ use Illuminate\Support\Facades\Storage;
 
 class DatabaseGetCommand extends Command
 {
+    /** @var string @see https://github.com/spatie/laravel-backup/blob/main/src/Tasks/Backup/BackupJob.php#L270 */
+    public const DB_DUMPS_DIRECTORY = 'db-dumps';
+
     /**
      * The name and signature of the console command.
      *
@@ -89,9 +92,10 @@ class DatabaseGetCommand extends Command
             $this->info(sprintf("Put '%s', wrote %d bytes", $filename, $bytes));
         }
         $this->info("Unzipping '$filename'...");
+        // @todo change this to use ZipArchive to unzip
         exec(sprintf('unzip %s -d %s', storage_path($filename), storage_path()));
         $filePath = '*.sql';
-        $storageFilePath = storage_path('db-dumps' . DIRECTORY_SEPARATOR . $filePath);
+        $storageFilePath = storage_path(self::DB_DUMPS_DIRECTORY . DIRECTORY_SEPARATOR . $filePath);
         $glob = glob($storageFilePath);
         return array_shift($glob);
     }
