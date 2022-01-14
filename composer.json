@@ -9,5 +9,10 @@
             "email": "jpswade@gmail.com"
         }
     ],
-    "require": {}
+    "require": {},
+    "autoload": {
+        "psr-4": {
+            "Jpswade\\LaravelDatabaseTools\\": "src"
+        }
+    }
 }
