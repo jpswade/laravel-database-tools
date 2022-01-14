@@ -1,0 +1,13 @@
+{
+    "name": "wade/laravel-database-tools",
+    "description": "Laravel Database Tools",
+    "type": "laravel-package",
+    "license": "MIT",
+    "authors": [
+        {
+            "name": "James Wade",
+            "email": "jpswade@gmail.com"
+        }
+    ],
+    "require": {}
+}
