@@ -30,8 +30,9 @@ class DatabaseFetchCommand extends Command
      * Execute the console command.
      *
      * @return int
+     * @throws DumpFailed
      */
-    public function handle()
+    public function handle(): int
     {
         $config = config('database.connections.mysql_read');
         $fields = ['host', 'database', 'username', 'password'];
@@ -86,7 +87,7 @@ class DatabaseFetchCommand extends Command
      *
      * @param MySql $mysqlDumper
      * @param string $dumpFile
-     *
+     * @param $tempFileHandle
      * @return Process
      */
     protected function dumpToFile(MySql $mysqlDumper, string $dumpFile, $tempFileHandle): Process

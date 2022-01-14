@@ -10,6 +10,7 @@
         }
     ],
     "require": {
+        "php": "^7.3",
         "illuminate/support": ">=5.7",
         "spatie/db-dumper": "^2.21"
     },

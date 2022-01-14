@@ -17,7 +17,7 @@ class DatabaseImportCommand extends Command
      *
      * @var string
      */
-    protected $signature = 'db:import {file?} {--force : Force the operation to run when in production}';
+    protected $signature = 'db:importFromFile {file?} {--force : Force the operation to run when in production}';
 
     /**
      * The console command description.
@@ -26,10 +26,7 @@ class DatabaseImportCommand extends Command
      */
     protected $description = 'Import data into a database.';
 
-    /**
-     * @return string
-     */
-    private static function getLatestSqlFile()
+    private static function getLatestSqlFile(): string
     {
         $filePath = '*.sql';
         $storageFilePath = storage_path($filePath);
@@ -43,9 +40,8 @@ class DatabaseImportCommand extends Command
      * Execute the console command.
      *
      * @return int
-     * @throws \Exception
      */
-    public function handle()
+    public function handle(): int
     {
         $force = $this->option('force');
         if ($force === false && app()->environment() === 'production') {

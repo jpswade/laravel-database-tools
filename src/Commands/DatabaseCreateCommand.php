@@ -35,8 +35,9 @@ class DatabaseCreateCommand extends Command
 
     /**
      * Execute the console command.
+     * @return int
      */
-    public function handle()
+    public function handle(): int
     {
         $connectionName = config('database.default');
         $connection = config('database.connections')[$connectionName];
@@ -54,5 +55,6 @@ class DatabaseCreateCommand extends Command
         DB::reconnect('mysql');
         DB::statement($query);
         config(["database.connections.{$connectionName}.database" => $schemaName]);
+        return 0;
     }
 }
