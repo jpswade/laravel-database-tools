@@ -9,7 +9,13 @@
             "email": "jpswade@gmail.com"
         }
     ],
-    "require": {},
+    "require": {
+        "illuminate/support": ">=5.7",
+        "spatie/db-dumper": "^2.21"
+    },
+    "require-dev": {
+        "phpunit/phpunit": "^6.0"
+    },
     "autoload": {
         "psr-4": {
             "Jpswade\\LaravelDatabaseTools\\": "src"

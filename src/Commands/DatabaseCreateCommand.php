@@ -1,0 +1,58 @@
+<?php
+
+namespace Jpswade\LaravelDatabaseTools\Commands;
+
+use Illuminate\Console\Command;
+use Illuminate\Support\Facades\DB;
+use InvalidArgumentException;
+
+/**
+ * Creates the database schema.
+ * @see https://github.com/laravel/framework/issues/19412
+ */
+class DatabaseCreateCommand extends Command
+{
+    /**
+     * The console command name.
+     *
+     * @var string
+     */
+    protected $name = 'db:create';
+
+    /**
+     * The console command description.
+     *
+     * @var string
+     */
+    protected $description = 'This command creates a new database';
+
+    /**
+     * The console command signature.
+     *
+     * @var string
+     */
+    protected $signature = 'db:create';
+
+    /**
+     * Execute the console command.
+     */
+    public function handle()
+    {
+        $connectionName = config('database.default');
+        $connection = config('database.connections')[$connectionName];
+        $schemaName = $connection['database'];
+        if (!$schemaName) {
+            throw new InvalidArgumentException('Missing Database Name');
+        }
+        $query = sprintf(
+            'CREATE DATABASE IF NOT EXISTS %s CHARACTER SET %s COLLATE %s;',
+            $schemaName,
+            $connection['charset'],
+            $connection['collation']
+        );
+        config(["database.connections.{$connectionName}.database" => null]);
+        DB::reconnect('mysql');
+        DB::statement($query);
+        config(["database.connections.{$connectionName}.database" => $schemaName]);
+    }
+}
