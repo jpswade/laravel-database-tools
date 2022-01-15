@@ -13,11 +13,11 @@ use InvalidArgumentException;
 class DatabaseCreateCommand extends Command
 {
     /**
-     * The console command name.
+     * The console command signature.
      *
      * @var string
      */
-    protected $name = 'db:create';
+    protected $signature = 'db:create';
 
     /**
      * The console command description.
@@ -25,13 +25,6 @@ class DatabaseCreateCommand extends Command
      * @var string
      */
     protected $description = 'This command creates a new database';
-
-    /**
-     * The console command signature.
-     *
-     * @var string
-     */
-    protected $signature = 'db:create';
 
     /**
      * Execute the console command.
@@ -55,6 +48,7 @@ class DatabaseCreateCommand extends Command
         DB::reconnect('mysql');
         DB::statement($query);
         config(["database.connections.{$connectionName}.database" => $schemaName]);
+        $this->info('Done');
         return 0;
     }
 }
