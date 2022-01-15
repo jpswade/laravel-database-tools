@@ -1,5 +1,5 @@
 {
-    "name": "wade/laravel-database-tools",
+    "name": "jpswade/laravel-database-tools",
     "description": "Laravel Database Tools",
     "type": "laravel-package",
     "license": "MIT",
