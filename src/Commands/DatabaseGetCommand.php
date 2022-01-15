@@ -4,8 +4,9 @@ namespace Jpswade\LaravelDatabaseTools\Commands;
 
 use Illuminate\Console\Command;
 use Illuminate\Contracts\Filesystem\Filesystem;
+use Illuminate\Filesystem\FilesystemManager;
 use Illuminate\Support\Facades\Config;
-use Illuminate\Support\Facades\Storage;
+use InvalidArgumentException;
 use Jpswade\LaravelDatabaseTools\ServiceProvider;
 use Jpswade\LaravelDatabaseTools\Unzip;
 
@@ -68,7 +69,15 @@ class DatabaseGetCommand extends Command
     private function getFileSystem(): Filesystem
     {
         $config = config(ServiceProvider::CONFIG_KEY . '.filesystem');
-        return Storage::build($config);
+        if (empty($config['driver'])) {
+            throw new InvalidArgumentException("Does not have a configured driver.");
+        }
+        $name = $config['driver'];
+        $driverMethod = 'create' . ucfirst($name) . 'Driver';
+        if (method_exists($this, $driverMethod) == false) {
+            throw new InvalidArgumentException("Driver [{$name}] is not supported.");
+        }
+        return FilesystemManager::{$driverMethod}($config);
     }
 
     private function getLatestFile(): string
