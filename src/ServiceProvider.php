@@ -35,9 +35,6 @@ class ServiceProvider extends BaseProvider
         }
     }
 
-    /**
-     * @return void
-     */
     private function getPublishes(): void
     {
         $this->publishes([
@@ -45,9 +42,6 @@ class ServiceProvider extends BaseProvider
         ], 'config');
     }
 
-    /**
-     * @return void
-     */
     private function getCommands(): void
     {
         $this->commands(self::COMMANDS);
