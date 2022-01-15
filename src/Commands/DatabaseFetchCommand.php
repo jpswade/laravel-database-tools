@@ -3,6 +3,7 @@
 namespace Jpswade\LaravelDatabaseTools\Commands;
 
 use Illuminate\Console\Command;
+use Jpswade\LaravelDatabaseTools\ServiceProvider;
 use Spatie\DbDumper\Databases\MySql;
 use Spatie\DbDumper\Exceptions\DumpFailed;
 use Symfony\Component\Process\Process;
@@ -33,7 +34,7 @@ class DatabaseFetchCommand extends Command
      */
     public function handle(): int
     {
-        $config = config('dbtools.database');
+        $config = config(ServiceProvider::CONFIG_KEY . '.database');
         $fields = ['host', 'database', 'username', 'password'];
         foreach ($fields as $field) {
             if (empty($config[$field])) {
