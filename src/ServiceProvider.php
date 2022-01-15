@@ -19,9 +19,12 @@ class ServiceProvider extends BaseProvider
         DatabaseImportFromFileCommand::class,
     ];
 
+    /** @var string */
+    public const CONFIG_PATH = __DIR__ . '/config/config.php';
+
     public function register()
     {
-        $this->mergeConfigFrom(__DIR__.'/../config/config.php', self::CONFIG_KEY);
+        $this->mergeConfigFrom(self::CONFIG_PATH, self::CONFIG_KEY);
     }
 
     public function boot()
@@ -38,7 +41,7 @@ class ServiceProvider extends BaseProvider
     private function getPublishes(): void
     {
         $this->publishes([
-            __DIR__ . '/../config/config.php' => config_path(self::CONFIG_KEY . '.php'),
+            self::CONFIG_PATH => config_path(self::CONFIG_KEY . '.php'),
         ], 'config');
     }
 
