@@ -6,11 +6,15 @@ use Illuminate\Console\Command;
 use Illuminate\Contracts\Filesystem\Filesystem;
 use Illuminate\Support\Facades\Config;
 use Illuminate\Support\Facades\Storage;
+use Jpswade\LaravelDatabaseTools\ServiceProvider;
 
 class DatabaseGetCommand extends Command
 {
     /** @var string @see https://github.com/spatie/laravel-backup/blob/11eb9f82bc0bd25ec69f5c169dde07290d913ce8/src/Tasks/Backup/BackupJob.php#L270 */
     public const DB_DUMPS_DIRECTORY = 'db-dumps';
+
+    /** @var string */
+    public const SQL_FILE_PATTERN = '*.sql';
 
     /**
      * The name and signature of the console command.
@@ -30,6 +34,11 @@ class DatabaseGetCommand extends Command
     private $storage;
 
     /**
+     * @var string
+     */
+    private $backupPath;
+
+    /**
      * Execute the console command.
      *
      * @return int
@@ -37,6 +46,11 @@ class DatabaseGetCommand extends Command
      */
     public function handle(): int
     {
+        $this->backupPath = $this->getBackupPath();
+        if (empty($this->backupPath)) {
+            $this->error('Unable to get backup config, have you done `composer require spatie/laravel-backup`?');
+            return 1;
+        }
         $this->storage = $this->getFileSystem();
         $file = $this->getLatestFile();
         $importFile = $this->fetchDatabaseArchive($file);
@@ -52,7 +66,7 @@ class DatabaseGetCommand extends Command
      */
     private function getFileSystem(): Filesystem
     {
-        $config = config('dbtools.filesystem');
+        $config = config(ServiceProvider::CONFIG_KEY . '.filesystem');
         return Storage::build($config);
     }
 
@@ -61,8 +75,7 @@ class DatabaseGetCommand extends Command
      */
     private function getLatestFile()
     {
-        $backupConfig = Config::get('backup');
-        $backupPath = $backupConfig['backup']['name'];
+        $backupPath = $this->backupPath;
         $files = collect($this->storage->listContents($backupPath));
         $files->sortByDesc('timestamp')->reject(function ($file) {
             return pathinfo($file['basename'], FILEINFO_EXTENSION) !== 'zip';
@@ -79,9 +92,8 @@ class DatabaseGetCommand extends Command
      */
     private function fetchDatabaseArchive(string $filename = null): string
     {
-        $backupConfig = Config::get('backup');
-        $backupPath = $backupConfig['backup']['name'];
-        $path = $backupPath . '/' . $filename;
+        $backupPath = $this->backupPath;
+        $path = $backupPath . DIRECTORY_SEPARATOR . $filename;
         if (file_exists(storage_path($filename)) === true) {
             $this->warn("File '$filename' already exists.'");
         } else {
@@ -97,9 +109,18 @@ class DatabaseGetCommand extends Command
         $this->info("Unzipping '$filename'...");
         // @todo change this to use ZipArchive to unzip
         exec(sprintf('unzip %s -d %s', storage_path($filename), storage_path()));
-        $filePath = '*.sql';
+        $filePath = self::SQL_FILE_PATTERN;
         $storageFilePath = storage_path(self::DB_DUMPS_DIRECTORY . DIRECTORY_SEPARATOR . $filePath);
         $glob = glob($storageFilePath);
         return array_shift($glob);
+    }
+
+    /**
+     * @return string
+     */
+    private function getBackupPath(): string
+    {
+        $backupConfig = Config::get('backup');
+        return $backupConfig['backup']['name'];
     }
 }
