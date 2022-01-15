@@ -30,3 +30,9 @@ The commands are:
 * `db:fetch` - Fetch a copy of the latest database from the configured server.
 * `db:get` - Download database backup file from backup.
 * `db:importFromFile {file?}` - Import data from a sql file into a database.
+
+## Limitations
+
+* The `db:get` command relies on the `spatie/laravel-backup` package for configuration.
+* The `db:fetch` command depends on `spatie/dbdumper`.
+* The commands have only been tested to work with MySQL at the moment, but could be extended to others.

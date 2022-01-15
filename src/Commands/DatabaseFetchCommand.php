@@ -33,7 +33,7 @@ class DatabaseFetchCommand extends Command
      */
     public function handle(): int
     {
-        $config = config('database.connections.mysql_read');
+        $config = config('dbtools.database');
         $fields = ['host', 'database', 'username', 'password'];
         foreach ($fields as $field) {
             if (empty($config[$field])) {
