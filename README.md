@@ -1,8 +1,9 @@
 # Laravel Database Tools
 
 The "missing" database toolset for Laravel. A set of commonly used Database Tools for Laravel.
- 
+
 With this package you can:
+
 - Create a database (if it does not exist)
 - Fetch from another database to file
 - Get and unzip from a database backup created by the [Spatie Backup package](https://github.com/spatie/laravel-backup)
@@ -12,7 +13,10 @@ With this package you can:
 
 Install the package into your Laravel application:
 
-* `composer require jpswade/laravel-database-tools`
+* `composer require --dev jpswade/laravel-database-tools`
+
+Note: It's wise to only install these tools in development by default, as it's rare you should need them in a production
+environment.
 
 ## Configure
 
