@@ -24,7 +24,7 @@ class DatabaseImportFromFileCommand extends Command
      *
      * @var string
      */
-    protected $description = 'Import data into a database.';
+    protected $description = 'Import data from a sql file into a database.';
 
     private static function getLatestSqlFile(): string
     {

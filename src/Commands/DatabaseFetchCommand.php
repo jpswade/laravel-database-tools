@@ -3,7 +3,6 @@
 namespace Jpswade\LaravelDatabaseTools\Commands;
 
 use Illuminate\Console\Command;
-use Illuminate\Support\Arr;
 use Spatie\DbDumper\Databases\MySql;
 use Spatie\DbDumper\Exceptions\DumpFailed;
 use Symfony\Component\Process\Process;
@@ -24,7 +23,7 @@ class DatabaseFetchCommand extends Command
      *
      * @var string
      */
-    protected $description = 'Fetch a copy of the latest database from the server.';
+    protected $description = 'Fetch a copy of the latest database from the configured server.';
 
     /**
      * Execute the console command.

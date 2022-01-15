@@ -21,3 +21,12 @@ Publish and customise your own `dbtools.php` file.
 * `php artisan vendor:publish --provider="Jpswade\LaravelDatabaseTools\ServiceProvider" --tag="config"`
 
 This allows you to set the source database and/or filesystem for the backup.
+
+## Usage
+
+The commands are:
+
+* `db:create` - Creates the database schema.
+* `db:fetch` - Fetch a copy of the latest database from the configured server.
+* `db:get` - Download database backup file from backup.
+* `db:importFromFile {file?}` - Import data from a sql file into a database.

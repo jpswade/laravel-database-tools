@@ -24,7 +24,7 @@ class DatabaseGetCommand extends Command
      *
      * @var string
      */
-    protected $description = 'Download database backup file from S3 bucket.';
+    protected $description = 'Download database backup file from backup.';
 
     /** @var Filesystem $storage */
     private $storage;
