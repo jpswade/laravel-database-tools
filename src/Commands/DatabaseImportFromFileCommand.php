@@ -7,7 +7,7 @@ use Illuminate\Support\Facades\DB;
 use InvalidArgumentException;
 use League\Flysystem\FileNotFoundException;
 
-class DatabaseImportCommand extends Command
+class DatabaseImportFromFileCommand extends Command
 {
     /** @var int */
     public const SECONDS_DELAY = 10;
