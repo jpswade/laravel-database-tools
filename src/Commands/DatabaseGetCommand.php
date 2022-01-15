@@ -74,7 +74,7 @@ class DatabaseGetCommand extends Command
         }
         $name = $config['driver'];
         $driverMethod = 'create' . ucfirst($name) . 'Driver';
-        if (method_exists(FilesystemManager::class, $driverMethod) == false) {
+        if (method_exists(FilesystemManager::class, $driverMethod) === false) {
             throw new InvalidArgumentException("Driver [{$name}] is not supported.");
         }
         return FilesystemManager::{$driverMethod}($config);
