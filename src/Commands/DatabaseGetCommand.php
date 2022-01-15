@@ -77,7 +77,8 @@ class DatabaseGetCommand extends Command
         if (method_exists(FilesystemManager::class, $driverMethod) === false) {
             throw new InvalidArgumentException("Driver [{$name}] is not supported.");
         }
-        return FilesystemManager::{$driverMethod}($config);
+        $filesystem = app()->make('filesystem');
+        return $filesystem->{$driverMethod}($config);
     }
 
     private function getLatestFile(): string
