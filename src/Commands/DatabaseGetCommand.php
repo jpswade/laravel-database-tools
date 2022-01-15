@@ -52,7 +52,8 @@ class DatabaseGetCommand extends Command
      */
     private function getFileSystem(): Filesystem
     {
-        return Storage::disk(self::FILESYSTEM);
+        $config = config('dbtools.filesystem');
+        return Storage::build($config);
     }
 
     /**
@@ -63,7 +64,9 @@ class DatabaseGetCommand extends Command
         $backupConfig = Config::get('backup');
         $backupPath = $backupConfig['backup']['name'];
         $files = collect($this->storage->listContents($backupPath));
-        $files->sortByDesc('timestamp');
+        $files->sortByDesc('timestamp')->reject(function ($file) {
+            return pathinfo($file['basename'], FILEINFO_EXTENSION) !== 'zip';
+        });
         $file = $files->first();
         return $file['basename'];
     }
