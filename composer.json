@@ -20,5 +20,12 @@
         "psr-4": {
             "Jpswade\\LaravelDatabaseTools\\": "src"
         }
+    },
+    "extra": {
+        "laravel": {
+            "providers": [
+                "Jpswade\\LaravelDatabaseTools\\ServiceProvider"
+            ]
+        }
     }
 }
