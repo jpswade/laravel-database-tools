@@ -70,10 +70,7 @@ class DatabaseGetCommand extends Command
         return Storage::build($config);
     }
 
-    /**
-     * @return mixed
-     */
-    private function getLatestFile()
+    private function getLatestFile(): string
     {
         $backupPath = $this->backupPath;
         $files = collect($this->storage->listContents($backupPath));
@@ -107,8 +104,7 @@ class DatabaseGetCommand extends Command
             $this->info(sprintf("Put '%s', wrote %d bytes", $filename, $bytes));
         }
         $this->info("Unzipping '$filename'...");
-        // @todo change this to use ZipArchive to unzip
-        exec(sprintf('unzip %s -d %s', storage_path($filename), storage_path()));
+        $this->unzip($filename);
         $filePath = self::SQL_FILE_PATTERN;
         $storageFilePath = storage_path(self::DB_DUMPS_DIRECTORY . DIRECTORY_SEPARATOR . $filePath);
         $glob = glob($storageFilePath);
@@ -122,5 +118,15 @@ class DatabaseGetCommand extends Command
     {
         $backupConfig = Config::get('backup');
         return $backupConfig['backup']['name'];
+    }
+
+    /**
+     * @param string|null $filename
+     * @return void
+     * @todo change this to use ZipArchive to unzip
+     */
+    private function unzip(string $filename): void
+    {
+        exec(sprintf('unzip %s -d %s', storage_path($filename), storage_path()));
     }
 }
