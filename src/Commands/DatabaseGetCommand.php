@@ -7,6 +7,7 @@ use Illuminate\Contracts\Filesystem\Filesystem;
 use Illuminate\Support\Facades\Config;
 use Illuminate\Support\Facades\Storage;
 use Jpswade\LaravelDatabaseTools\ServiceProvider;
+use Jpswade\LaravelDatabaseTools\Unzip;
 
 class DatabaseGetCommand extends Command
 {
@@ -120,13 +121,9 @@ class DatabaseGetCommand extends Command
         return $backupConfig['backup']['name'];
     }
 
-    /**
-     * @param string|null $filename
-     * @return void
-     * @todo change this to use ZipArchive to unzip
-     */
     private function unzip(string $filename): void
     {
-        exec(sprintf('unzip %s -d %s', storage_path($filename), storage_path()));
+        $unzip = new Unzip();
+        $unzip($filename, storage_path());
     }
 }
