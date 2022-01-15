@@ -3,10 +3,21 @@
 namespace Jpswade\LaravelDatabaseTools;
 
 use Illuminate\Support\ServiceProvider as BaseProvider;
+use Jpswade\LaravelDatabaseTools\Commands\DatabaseCreateCommand;
+use Jpswade\LaravelDatabaseTools\Commands\DatabaseFetchCommand;
+use Jpswade\LaravelDatabaseTools\Commands\DatabaseGetCommand;
+use Jpswade\LaravelDatabaseTools\Commands\DatabaseImportFromFileCommand;
 
 class ServiceProvider extends BaseProvider
 {
-    const CONFIG_KEY = 'dbtools';
+    public const CONFIG_KEY = 'dbtools';
+
+    public const COMMANDS = [
+        DatabaseCreateCommand::class,
+        DatabaseFetchCommand::class,
+        DatabaseGetCommand::class,
+        DatabaseImportFromFileCommand::class,
+    ];
 
     public function register()
     {
@@ -16,11 +27,26 @@ class ServiceProvider extends BaseProvider
     public function boot()
     {
         if ($this->app->runningInConsole()) {
-
-            $this->publishes([
-                __DIR__.'/../config/config.php' => config_path(self::CONFIG_KEY . '.php'),
-            ], 'config');
-
+            $this->getPublishes();
+            $this->getCommands();
         }
+    }
+
+    /**
+     * @return void
+     */
+    private function getPublishes(): void
+    {
+        $this->publishes([
+            __DIR__ . '/../config/config.php' => config_path(self::CONFIG_KEY . '.php'),
+        ], 'config');
+    }
+
+    /**
+     * @return void
+     */
+    private function getCommands(): void
+    {
+        $this->commands(self::COMMANDS);
     }
 }
