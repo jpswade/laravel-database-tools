@@ -40,6 +40,7 @@ class DatabaseImportFromFileCommand extends Command
      * Execute the console command.
      *
      * @return int
+     * @throws FileNotFoundException
      */
     public function handle(): int
     {
@@ -50,7 +51,7 @@ class DatabaseImportFromFileCommand extends Command
         $connectionName = config('database.default');
         $connection = config('database.connections')[$connectionName];
         $schemaName = $connection['database'];
-        if (!$schemaName) {
+        if (empty($schemaName)) {
             throw new InvalidArgumentException('Missing Database Name');
         }
         $importFile = $this->argument('file');
@@ -75,7 +76,7 @@ class DatabaseImportFromFileCommand extends Command
         $bar->setFormat('verbose');
         $bar->start();
         while (!feof($handle)) {
-            $buffer = stream_get_line($handle, $length, ";\n");
+            $buffer = stream_get_line($handle, $length, ';' . PHP_EOL);
             $bar->advance(strlen($buffer));
             if (empty(trim($buffer)) === false) {
                 DB::unprepared($buffer);
@@ -87,7 +88,7 @@ class DatabaseImportFromFileCommand extends Command
     /**
      * @throws FileNotFoundException
      */
-    private function getImportFile(string $importFile): string
+    private function getImportFile(?string $importFile = null): string
     {
         $importFile = empty($importFile) ? $this->getLatestSqlFile() : $importFile;
         if (empty($importFile)) {
