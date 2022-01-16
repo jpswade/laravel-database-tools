@@ -37,6 +37,9 @@ The commands are:
 
 ## Limitations
 
+These are limitations you'll come across if you use certain commands:
+
 * The `db:get` command relies on the `spatie/laravel-backup` package for configuration.
+* The `db:get` command relies on the `league/flysystem-aws-s3-v3 "^1.0"` package for the [Amazon S3 Driver](https://laravel.com/docs/5.1/filesystem#configuration) as per the Laravel docs.
 * The `db:fetch` command depends on `spatie/dbdumper`.
 * The commands have only been tested to work with MySQL at the moment, but could be extended to others.
