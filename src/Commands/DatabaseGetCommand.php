@@ -102,7 +102,8 @@ class DatabaseGetCommand extends Command
     {
         $backupPath = $this->backupPath;
         $path = $backupPath . DIRECTORY_SEPARATOR . $filename;
-        if (file_exists(storage_path($filename)) === true) {
+        $file = storage_path($filename);
+        if (file_exists($file) === true) {
             $this->warn("File '$filename' already exists.'");
         } else {
             $this->info("File '$filename' does not exist, downloading...'");
@@ -111,11 +112,11 @@ class DatabaseGetCommand extends Command
             $this->info(sprintf("Getting '%s', %d bytes", $filename, $size));
             $content = $storage->get($path);
             $this->info(sprintf("Got '%s', %d in length", $filename, strlen($content)));
-            $bytes = file_put_contents(storage_path($filename), $content);
+            $bytes = file_put_contents($file, $content);
             $this->info(sprintf("Put '%s', wrote %d bytes", $filename, $bytes));
         }
         $this->info("Unzipping '$filename'...");
-        $this->unzip($filename);
+        $this->unzip($file);
         $filePath = self::SQL_FILE_PATTERN;
         $storageFilePath = storage_path(self::DB_DUMPS_DIRECTORY . DIRECTORY_SEPARATOR . $filePath);
         $glob = glob($storageFilePath);
