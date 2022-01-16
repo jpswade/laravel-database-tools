@@ -37,23 +37,23 @@ class Unzip
         $errors = self::ERRORS;
         if (function_exists('zip_open') === false) {
             $message = "zip_open() function does not exist.";
-            throw new ErrorException($message);
+            throw new \BadFunctionCallException($message);
         }
         $path = realpath($path);
         $file = realpath($file);
         if (is_writable($path) === false) {
             $message = "'$path' is not writable.";
-            throw new ErrorException($message);
+            throw new \OutOfRangeException($message);
         }
         if (is_readable($file) === false) {
             $message = "'$file' is not readable.";
-            throw new ErrorException($message);
+            throw new \OutOfRangeException($message);
         }
         $open = zip_open($file);
         if (is_resource($open) === false) {
             $error = ($errors[$open] ?? 'unknown');
             $message = sprintf("Unable to open zip '%s', error was '%s'.", $file, $error);
-            throw new ErrorException($message);
+            throw new \OutOfRangeException($message);
         }
         $files = [];
         while ($entry = zip_read($open)) {
