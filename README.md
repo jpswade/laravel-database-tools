@@ -5,7 +5,7 @@ The "missing" database toolset for Laravel. A set of commonly used Database Tool
 With this package you can:
 
 - Create a database (if it does not exist)
-- Fetch from another database to file
+- Dump from another database to file
 - Get and unzip from a database backup created by the [Spatie Backup package](https://github.com/spatie/laravel-backup)
 - Import from file
 
