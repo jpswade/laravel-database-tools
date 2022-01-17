@@ -16,10 +16,10 @@ class DatabaseGetFromBackupCommand extends Command
     public const DB_DUMPS_DIRECTORY = 'db-dumps';
 
     /** @var string */
-    public const SQL_EXTENSION = '.sql';
+    public const SQL_EXTENSION = 'sql';
 
     /** @var string */
-    public const SQL_FILE_PATTERN = '*' . self::SQL_EXTENSION;
+    public const SQL_FILE_PATTERN = '*.' . self::SQL_EXTENSION;
 
     /** @var string */
     public const ZIP_EXTENSION = 'zip';
@@ -99,7 +99,7 @@ class DatabaseGetFromBackupCommand extends Command
         }
         $files = collect($list);
         $files->sortByDesc('timestamp')->reject(function ($file) {
-            return in_array($this->getExtension($file['basename']), ['zip', 'sql']) === false;
+            return in_array($this->getExtension($file['basename']), [self::ZIP_EXTENSION, self::SQL_EXTENSION], false) === false;
         });
         $file = $files->first();
         if ($file === null) {
@@ -180,7 +180,7 @@ class DatabaseGetFromBackupCommand extends Command
      */
     private function getTargetFile(?string $filename): string
     {
-        $importFilename = pathinfo($filename, PATHINFO_FILENAME) . self::SQL_EXTENSION;
+        $importFilename = pathinfo($filename, PATHINFO_FILENAME) . '.' . self::SQL_EXTENSION;
         return storage_path($importFilename);
     }
 
