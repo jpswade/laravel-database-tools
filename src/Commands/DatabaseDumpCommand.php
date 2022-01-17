@@ -8,7 +8,7 @@ use Spatie\DbDumper\Databases\MySql;
 use Spatie\DbDumper\Exceptions\DumpFailed;
 use Symfony\Component\Process\Process;
 
-class DatabaseFetchCommand extends Command
+class DatabaseDumpCommand extends Command
 {
     private const TIMEOUT = 0;
 
@@ -17,7 +17,7 @@ class DatabaseFetchCommand extends Command
      *
      * @var string
      */
-    protected $signature = 'db:fetch';
+    protected $signature = 'db:dump';
 
     /**
      * The console command description.

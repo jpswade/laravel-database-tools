@@ -4,8 +4,8 @@ namespace Jpswade\LaravelDatabaseTools;
 
 use Illuminate\Support\ServiceProvider as BaseProvider;
 use Jpswade\LaravelDatabaseTools\Commands\DatabaseCreateCommand;
-use Jpswade\LaravelDatabaseTools\Commands\DatabaseFetchCommand;
-use Jpswade\LaravelDatabaseTools\Commands\DatabaseGetCommand;
+use Jpswade\LaravelDatabaseTools\Commands\DatabaseDumpCommand;
+use Jpswade\LaravelDatabaseTools\Commands\DatabaseGetFromBackupCommand;
 use Jpswade\LaravelDatabaseTools\Commands\DatabaseImportFromFileCommand;
 
 class ServiceProvider extends BaseProvider
@@ -14,8 +14,8 @@ class ServiceProvider extends BaseProvider
 
     public const COMMANDS = [
         DatabaseCreateCommand::class,
-        DatabaseFetchCommand::class,
-        DatabaseGetCommand::class,
+        DatabaseDumpCommand::class,
+        DatabaseGetFromBackupCommand::class,
         DatabaseImportFromFileCommand::class,
     ];
 

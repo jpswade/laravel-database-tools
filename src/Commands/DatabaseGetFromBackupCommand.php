@@ -10,7 +10,7 @@ use InvalidArgumentException;
 use Jpswade\LaravelDatabaseTools\ServiceProvider;
 use Jpswade\LaravelDatabaseTools\Unzip;
 
-class DatabaseGetCommand extends Command
+class DatabaseGetFromBackupCommand extends Command
 {
     /** @var string @see https://github.com/spatie/laravel-backup/blob/11eb9f82bc0bd25ec69f5c169dde07290d913ce8/src/Tasks/Backup/BackupJob.php#L270 */
     public const DB_DUMPS_DIRECTORY = 'db-dumps';
@@ -23,7 +23,7 @@ class DatabaseGetCommand extends Command
      *
      * @var string
      */
-    protected $signature = 'db:get';
+    protected $signature = 'db:getFromBackup';
 
     /**
      * The console command description.
