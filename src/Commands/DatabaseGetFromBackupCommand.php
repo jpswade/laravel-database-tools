@@ -47,13 +47,21 @@ class DatabaseGetFromBackupCommand extends Command
     private $backupPath;
 
     /**
+     * @var array
+     */
+    private $config;
+
+    /**
      * Execute the console command.
      *
+     * @param Config $config
      * @return int
-     * @throws \Exception
+     * @throws \Illuminate\Contracts\Filesystem\FileNotFoundException
+     * @throws \League\Flysystem\FileNotFoundException
      */
-    public function handle(): int
+    public function handle(Config $config): int
     {
+        $this->config = $config::get(ServiceProvider::CONFIG_KEY);
         $this->backupPath = $this->getBackupPath();
         if (empty($this->backupPath)) {
             $this->error('Unable to get backup config, have you done `composer require spatie/laravel-backup`?');
@@ -77,7 +85,7 @@ class DatabaseGetFromBackupCommand extends Command
      */
     private function getFileSystem(): Filesystem
     {
-        $config = config(ServiceProvider::CONFIG_KEY . '.filesystem');
+        $config = $this->config['filesystem'];
         if (empty($config['driver'])) {
             throw new InvalidArgumentException("Does not have a configured driver.");
         }
@@ -150,9 +158,9 @@ class DatabaseGetFromBackupCommand extends Command
      */
     private function getBackupPath(): string
     {
-        $config = Config::get(ServiceProvider::CONFIG_KEY);
+        $config = $this->config;
         if (empty($config['filesystem']['path'] === false)) {
-            return config(ServiceProvider::CONFIG_KEY . '.filesystem.path');
+            return $config['filesystem']['path'];
         }
         $backupConfig = Config::get('backup');
         $backupPath = $backupConfig['backup']['name'];
@@ -164,8 +172,12 @@ class DatabaseGetFromBackupCommand extends Command
 
     private function unzip(string $filename): void
     {
-        $unzip = new Unzip();
-        $unzip($filename, storage_path());
+        if (isset($this->config['get']['method']) && $this->config['get']['method'] === 'command') {
+            exec(sprintf('unzip %s -d %s', storage_path($filename), storage_path()));
+        } else {
+            $unzip = new Unzip();
+            $unzip($filename, storage_path());
+        }
         $unzippedFileName = '-';
         $unzippedFile = $this->getTargetFile($unzippedFileName);
         if (file_exists($unzippedFile)) {

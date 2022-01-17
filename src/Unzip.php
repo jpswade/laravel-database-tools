@@ -2,7 +2,9 @@
 
 namespace Jpswade\LaravelDatabaseTools;
 
+use BadFunctionCallException;
 use OutOfRangeException;
+use RuntimeException;
 use ZipArchive;
 
 class Unzip
@@ -38,7 +40,7 @@ class Unzip
         $errors = self::ERRORS;
         if (function_exists('zip_open') === false) {
             $message = "zip_open() function does not exist.";
-            throw new \BadFunctionCallException($message);
+            throw new BadFunctionCallException($message);
         }
         $path = realpath($path);
         $file = realpath($file);
@@ -63,7 +65,7 @@ class Unzip
             if (substr(zip_entry_name($entry), -1) === DIRECTORY_SEPARATOR) {
                 $dir = $path . DIRECTORY_SEPARATOR . substr(zip_entry_name($entry), 0, -1);
                 if ((file_exists($dir) === false) && !mkdir($dir) && !is_dir($dir)) {
-                    throw new \RuntimeException(sprintf('Directory "%s" was not created', $dir));
+                    throw new RuntimeException(sprintf('Directory "%s" was not created', $dir));
                 }
             } else {
                 $name = $path . DIRECTORY_SEPARATOR . zip_entry_name($entry);

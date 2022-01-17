@@ -26,5 +26,7 @@ return [
         'path' => env('DB_AWS_BUCKET_PATH'),
     ],
 
-    'import' => ['method' => 'command']
+    'import' => ['method' => 'command'],
+
+    'get' => ['method' => 'command'],
 ];
