@@ -26,6 +26,10 @@ Publish and customise your own `dbtools.php` file.
 
 This allows you to set the source database and/or filesystem for the backup.
 
+* `dbtools.database` - Here you can define the source database for the `db:dump` command. 
+* `dbtools.filesystem` - Here you can define the source filesystem for the `db:getFromBackup` command.
+* `dbtools.import` - Here you can define the `method` (command or normal) for the `db:importFromFile` command.
+
 ## Usage
 
 The commands are:

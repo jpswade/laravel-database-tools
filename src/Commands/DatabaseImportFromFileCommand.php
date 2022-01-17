@@ -2,6 +2,7 @@
 
 namespace Jpswade\LaravelDatabaseTools\Commands;
 
+use File;
 use Illuminate\Console\Command;
 use Illuminate\Support\Facades\DB;
 use InvalidArgumentException;
@@ -11,6 +12,8 @@ class DatabaseImportFromFileCommand extends Command
 {
     /** @var int */
     public const SECONDS_DELAY = 10;
+
+    private const MAX_ALLOWED_PACKET = 1000000000;
 
     /**
      * The name and signature of the console command.
@@ -26,16 +29,6 @@ class DatabaseImportFromFileCommand extends Command
      */
     protected $description = 'Import data from a sql file into a database.';
 
-    private static function getLatestSqlFile(): string
-    {
-        $filePath = '*.sql';
-        $storageFilePath = storage_path($filePath);
-        $files = glob($storageFilePath);
-        $files = array_combine(array_map('filemtime', $files), $files);
-        krsort($files);
-        return array_shift($files);
-    }
-
     /**
      * Execute the console command.
      *
@@ -48,41 +41,68 @@ class DatabaseImportFromFileCommand extends Command
         if ($force === false && app()->environment() === 'production') {
             throw new \RuntimeException('Cannot be run in a production environment.');
         }
-        $connectionName = config('database.default');
-        $connection = config('database.connections')[$connectionName];
-        $schemaName = $connection['database'];
-        if (empty($schemaName)) {
-            throw new InvalidArgumentException('Missing Database Name');
-        }
+        $connection = $this->checkConnection();
+        $this->checkMaxAllowedPacket();
+        $this->setForeignKeyCheckOff();
         $importFile = $this->argument('file');
         $importFile = $this->getImportFile($importFile);
         $env = strtoupper(app()->environment());
-        $warning = sprintf('[%s] Starting import from %s to %s@%s/%s in %d seconds', $env, $importFile, $connection['username'], $connection['host'], $schemaName, self::SECONDS_DELAY);
-        $this->warn($warning);
-        for ($i = 1; $i <= self::SECONDS_DELAY; $i++) {
-            printf('.');
-            sleep(1);
+        $message = sprintf('[%s] Starting import from %s to %s@%s:%s/%s in %d seconds', $env, $importFile, $connection['username'], $connection['host'], $connection['port'], $connection['database'], self::SECONDS_DELAY);
+        $this->comment($message);
+        self::wait();
+        if (config('dbtools.import.method') === 'command') {
+            $this->databaseImportUsingCommandLine($importFile, $connection);
+        } else {
+            $this->databaseImport($importFile);
         }
-        $this->databaseImport($importFile);
         return 0;
     }
 
-    private function databaseImport(string $importFile): void
+    /**
+     * @return array
+     */
+    private function checkConnection(): array
     {
-        $length = memory_get_peak_usage(true);
-        $handle = fopen($importFile, 'rb');
-        $max = filesize($importFile);
-        $bar = $this->output->createProgressBar($max);
-        $bar->setFormat('verbose');
-        $bar->start();
-        while (!feof($handle)) {
-            $buffer = stream_get_line($handle, $length, ';' . PHP_EOL);
-            $bar->advance(strlen($buffer));
-            if (empty(trim($buffer)) === false) {
-                DB::unprepared($buffer);
+        $connectionName = config('database.default');
+        $connection = config('database.connections')[$connectionName];
+        if (!$connection['database']) {
+            throw new InvalidArgumentException('Missing Database Name');
+        }
+        return $connection;
+    }
+
+    private function checkMaxAllowedPacket(): void
+    {
+        $query = "SHOW VARIABLES LIKE 'max_allowed_packet'";
+        $result = DB::select($query);
+        $value = (int)$result[0]->Value;
+        if ($value < self::MAX_ALLOWED_PACKET) {
+            $this->warn('Max allowed packet is lower than expected increasing to ' . self::MAX_ALLOWED_PACKET);
+            $query = 'SET GLOBAL max_allowed_packet=' . self::MAX_ALLOWED_PACKET;
+            $result = DB::unprepared($query);
+            if ($result) {
+                $this->comment('Max allowed packet was increased to ' . self::MAX_ALLOWED_PACKET);
+            } else {
+                throw new \RuntimeException('Unable to increase max allowed packet.');
             }
         }
-        $bar->finish();
+    }
+
+    private function setForeignKeyCheckOff(): void
+    {
+        $query = "SHOW VARIABLES LIKE 'FOREIGN_KEY_CHECKS'";
+        $result = DB::select($query);
+        if ($result[0]->Value === 'ON') {
+            $this->comment('Foreign Key Check is set ON, setting to OFF.');
+            $result = Schema::disableForeignKeyConstraints();
+            if ($result) {
+                $this->comment('Foreign Key Check is now set to OFF.');
+            } else {
+                throw new \RuntimeException('Failed to set to OFF.');
+            }
+        } else {
+            $this->comment('Foreign Key Check is already set OFF.');
+        }
     }
 
     /**
@@ -102,5 +122,93 @@ class DatabaseImportFromFileCommand extends Command
             }
         }
         return $importFile;
+    }
+
+    private static function getLatestSqlFile(): string
+    {
+        $filePath = '*.sql';
+        $storageFilePath = storage_path($filePath);
+        $files = glob($storageFilePath);
+        $files = array_combine(array_map('filemtime', $files), $files);
+        krsort($files);
+        return array_shift($files);
+    }
+
+    private static function wait(int $seconds = self::SECONDS_DELAY): void
+    {
+        for ($i = 1; $i <= $seconds; $i++) {
+            printf('.');
+            sleep(1);
+        }
+    }
+
+    private function databaseImport(string $importFile): void
+    {
+        DB::disableQueryLog();
+        $max = File::size($importFile);
+        $bar = $this->output->createProgressBar($max);
+        $bar->setFormat('verbose');
+        $bar->start();
+        $handle = fopen($importFile, 'rb');
+        $length = memory_get_peak_usage(true);
+        while (!feof($handle)) {
+            $buffer = stream_get_line($handle, $length, ';' . PHP_EOL);
+            $bar->advance(strlen($buffer));
+            if (empty(trim($buffer)) === false) {
+                DB::unprepared($buffer);
+            }
+        }
+        $bar->finish();
+    }
+
+    private function databaseImportUsingCommandLine(string $importFile, array $connection): void
+    {
+        DB::disableQueryLog();
+        $tempFileHandle = tmpfile();
+        $bar = $this->output->createProgressBar();
+        $bar->setFormat('verbose');
+        $process = $this->importFromFile($importFile, $tempFileHandle, $connection);
+        $process->start();
+        while ($process->isRunning()) {
+            sleep(1);
+            $bar->advance();
+        }
+        $bar->finish();
+        if (!$process->isSuccessful()) {
+            throw new \RuntimeException("The import process failed with exitcode {$process->getExitCode()} : {$process->getExitCodeText()} : {$process->getErrorOutput()}");
+        }
+    }
+
+    /**
+     * Import the contents of the database to the database.
+     *
+     * @param string $importFile
+     * @param resource $tempFileHandle
+     * @param array $connection
+     * @return Process
+     */
+    protected function importFromFile(string $importFile, $tempFileHandle, array $connection): Process
+    {
+        $contents = [
+            '[client]',
+            "user = '{$connection['username']}'",
+            "password = '{$connection['password']}'",
+            "port = '{$connection['port']}'",
+            "host = '{$connection['host']}'",
+        ];
+
+        $contents = implode(PHP_EOL, $contents);
+        fwrite($tempFileHandle, $contents);
+        $temporaryCredentialsFile = stream_get_meta_data($tempFileHandle)['uri'];
+
+        $command = [
+            'mysql',
+            "--defaults-extra-file=\"{$temporaryCredentialsFile}\"",
+        ];
+        $command[] = $connection['database'];
+        $query = sprintf('SET autocommit=0; source %s; COMMIT;', $importFile);
+        $command[] = sprintf('-e "%s"', $query);
+        $command = implode(' ', $command);
+        return Process::fromShellCommandline($command);
     }
 }

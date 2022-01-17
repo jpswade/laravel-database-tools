@@ -24,4 +24,6 @@ return [
         'region' => env('AWS_DEFAULT_REGION', 'eu-west-1'),
         'bucket' => env('DB_AWS_BUCKET'),
     ],
+
+    'import' => ['method' => 'command']
 ];
