@@ -8,6 +8,7 @@ use Illuminate\Support\Facades\DB;
 use InvalidArgumentException;
 use League\Flysystem\FileNotFoundException;
 use Illuminate\Support\Facades\Schema;
+use Symfony\Component\Process\Process;
 
 class DatabaseImportFromFileCommand extends Command
 {
