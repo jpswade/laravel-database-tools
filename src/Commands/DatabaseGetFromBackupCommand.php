@@ -21,6 +21,9 @@ class DatabaseGetFromBackupCommand extends Command
     /** @var string */
     public const SQL_FILE_PATTERN = '*' . self::SQL_EXTENSION;
 
+    /** @var string */
+    public const ZIP_EXTENSION = 'zip';
+
     /**
      * The name and signature of the console command.
      *
@@ -52,6 +55,10 @@ class DatabaseGetFromBackupCommand extends Command
     public function handle(): int
     {
         $this->backupPath = $this->getBackupPath();
+        if (empty($this->backupPath)) {
+            $this->error('Unable to get backup config, have you done `composer require spatie/laravel-backup`?');
+            return 1;
+        }
         $this->storage = $this->getFileSystem();
         $file = $this->argument('file');
         if (empty($file) === true) {
@@ -88,7 +95,7 @@ class DatabaseGetFromBackupCommand extends Command
         $backupPath = $this->backupPath;
         $files = collect($this->storage->listContents($backupPath));
         $files->sortByDesc('timestamp')->reject(function ($file) {
-            return pathinfo($file['basename'], FILEINFO_EXTENSION) !== 'zip';
+            return in_array($this->getExtension($file['basename']), ['zip', 'sql']) === false;
         });
         $file = $files->first();
         return $file['basename'];
@@ -121,26 +128,23 @@ class DatabaseGetFromBackupCommand extends Command
             $bytes = file_put_contents($file, $content);
             $this->info(sprintf("Put '%s', wrote %d bytes", $filename, $bytes));
         }
-        $this->info("Unzipping '$filename'...");
-        $this->unzip($file);
+        if ($this->getExtension($file) === self::ZIP_EXTENSION) {
+            $this->info("Unzipping '$filename'...");
+            $this->unzip($file);
+        }
         $filePath = self::SQL_FILE_PATTERN;
         $storageFilePath = $this->getTargetFile(self::DB_DUMPS_DIRECTORY . DIRECTORY_SEPARATOR . $filePath);
         $glob = glob($storageFilePath);
         return array_shift($glob);
     }
 
+    /**
+     * @return string
+     */
     private function getBackupPath(): string
     {
-        $config = Config::get('dbtools');
-        if (empty($config(['filesystem']['path'])) === false) {
-            return config('dbtools.filesystem.path');
-        }
         $backupConfig = Config::get('backup');
-        $backupPath = $backupConfig['backup']['name'];
-        if (empty($backupPath)) {
-            throw new InvalidArgumentException('Unable to get backup config, have you done `composer require spatie/laravel-backup`?');
-        }
-        return $backupPath;
+        return $backupConfig['backup']['name'];
     }
 
     private function unzip(string $filename): void
@@ -163,5 +167,14 @@ class DatabaseGetFromBackupCommand extends Command
     {
         $importFilename = pathinfo($filename, PATHINFO_FILENAME) . self::SQL_EXTENSION;
         return storage_path($importFilename);
+    }
+
+    /**
+     * @param $basename
+     * @return array|string|string[]
+     */
+    private function getExtension($basename)
+    {
+        return pathinfo($basename, FILEINFO_EXTENSION);
     }
 }
