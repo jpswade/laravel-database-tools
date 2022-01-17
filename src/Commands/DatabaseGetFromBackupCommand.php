@@ -93,11 +93,18 @@ class DatabaseGetFromBackupCommand extends Command
     private function getLatestFile(): string
     {
         $backupPath = $this->backupPath;
-        $files = collect($this->storage->listContents($backupPath));
+        $list = $this->storage->listContents($backupPath);
+        if (empty($list)) {
+            throw new \RuntimeException('No files available');
+        }
+        $files = collect($list);
         $files->sortByDesc('timestamp')->reject(function ($file) {
             return in_array($this->getExtension($file['basename']), ['zip', 'sql']) === false;
         });
         $file = $files->first();
+        if ($file === null) {
+            throw new \RuntimeException('Unable to get latest file');
+        }
         return $file['basename'];
     }
 
