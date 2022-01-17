@@ -7,6 +7,7 @@ use Illuminate\Console\Command;
 use Illuminate\Support\Facades\DB;
 use InvalidArgumentException;
 use League\Flysystem\FileNotFoundException;
+use Illuminate\Support\Facades\Schema;
 
 class DatabaseImportFromFileCommand extends Command
 {
