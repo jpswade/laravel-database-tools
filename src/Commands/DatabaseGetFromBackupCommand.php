@@ -16,21 +16,24 @@ class DatabaseGetFromBackupCommand extends Command
     public const DB_DUMPS_DIRECTORY = 'db-dumps';
 
     /** @var string */
-    public const SQL_FILE_PATTERN = '*.sql';
+    public const SQL_EXTENSION = '.sql';
+
+    /** @var string */
+    public const SQL_FILE_PATTERN = '*' . self::SQL_EXTENSION;
 
     /**
      * The name and signature of the console command.
      *
      * @var string
      */
-    protected $signature = 'db:getFromBackup';
+    protected $signature = 'db:getFromBackup {file?}';
 
     /**
      * The console command description.
      *
      * @var string
      */
-    protected $description = 'Download database backup file from backup.';
+    protected $description = 'Get database backup file from backup.';
 
     /** @var Filesystem $storage */
     private $storage;
@@ -54,7 +57,10 @@ class DatabaseGetFromBackupCommand extends Command
             return 1;
         }
         $this->storage = $this->getFileSystem();
-        $file = $this->getLatestFile();
+        $file = $this->argument('file');
+        if (empty($file) === true) {
+            $file = $this->getLatestFile();
+        }
         $importFile = $this->fetchDatabaseArchive($file);
         $this->info($importFile);
         return 0;
@@ -102,8 +108,12 @@ class DatabaseGetFromBackupCommand extends Command
     {
         $backupPath = $this->backupPath;
         $path = $backupPath . DIRECTORY_SEPARATOR . $filename;
-        $file = storage_path($filename);
+        $file = $this->getTargetFile($filename);
         if (file_exists($file) === true) {
+            $this->warn("File '$file' already exists.'");
+            return $file;
+        }
+        if (file_exists($path) === true) {
             $this->warn("File '$filename' already exists.'");
         } else {
             $this->info("File '$filename' does not exist, downloading...'");
@@ -118,7 +128,7 @@ class DatabaseGetFromBackupCommand extends Command
         $this->info("Unzipping '$filename'...");
         $this->unzip($file);
         $filePath = self::SQL_FILE_PATTERN;
-        $storageFilePath = storage_path(self::DB_DUMPS_DIRECTORY . DIRECTORY_SEPARATOR . $filePath);
+        $storageFilePath = $this->getTargetFile(self::DB_DUMPS_DIRECTORY . DIRECTORY_SEPARATOR . $filePath);
         $glob = glob($storageFilePath);
         return array_shift($glob);
     }
@@ -136,5 +146,21 @@ class DatabaseGetFromBackupCommand extends Command
     {
         $unzip = new Unzip();
         $unzip($filename, storage_path());
+        $unzippedFileName = '-';
+        $unzippedFile = $this->getTargetFile($unzippedFileName);
+        if (file_exists($unzippedFile)) {
+            $this->info("Renaming '$unzippedFileName' to '$filename'...");
+            rename($unzippedFile, $filename);
+        }
+    }
+
+    /**
+     * @param string|null $filename
+     * @return string
+     */
+    private function getTargetFile(?string $filename): string
+    {
+        $importFilename = pathinfo($filename, PATHINFO_FILENAME) . self::SQL_EXTENSION;
+        return storage_path($importFilename);
     }
 }
