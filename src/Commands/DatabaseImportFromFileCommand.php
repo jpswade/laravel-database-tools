@@ -6,6 +6,7 @@ use File;
 use Illuminate\Console\Command;
 use Illuminate\Support\Facades\DB;
 use InvalidArgumentException;
+use Jpswade\LaravelDatabaseTools\ServiceProvider;
 use League\Flysystem\FileNotFoundException;
 use Illuminate\Support\Facades\Schema;
 use Symfony\Component\Process\Process;
@@ -52,7 +53,7 @@ class DatabaseImportFromFileCommand extends Command
         $message = sprintf('[%s] Starting import from %s to %s@%s:%s/%s in %d seconds', $env, $importFile, $connection['username'], $connection['host'], $connection['port'], $connection['database'], self::SECONDS_DELAY);
         $this->comment($message);
         self::wait();
-        if (config('dbtools.import.method') === 'command') {
+        if (config(ServiceProvider::CONFIG_KEY . '.import.method') === 'command') {
             $this->databaseImportUsingCommandLine($importFile, $connection);
         } else {
             $this->databaseImport($importFile);

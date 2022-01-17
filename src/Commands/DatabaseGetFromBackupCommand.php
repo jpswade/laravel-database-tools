@@ -150,14 +150,14 @@ class DatabaseGetFromBackupCommand extends Command
      */
     private function getBackupPath(): string
     {
-        $config = Config::get('dbtools');
+        $config = Config::get(ServiceProvider::CONFIG_KEY);
         if (empty($config['filesystem']['path'] === false)) {
-            return config('dbtools.filesystem.path');
+            return config(ServiceProvider::CONFIG_KEY . '.filesystem.path');
         }
         $backupConfig = Config::get('backup');
         $backupPath = $backupConfig['backup']['name'];
         if (empty($backupPath)) {
-            throw new InvalidArgumentException('Unable to get backup config, have you done `composer require spatie/laravel-backup`?');
+            throw new InvalidArgumentException('Unable to get backup config, have you configured `spatie/laravel-backup`?');
         }
         return $backupPath;
     }
