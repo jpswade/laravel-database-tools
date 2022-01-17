@@ -32,6 +32,7 @@ class DatabaseCreateCommand extends Command
      */
     public function handle(): int
     {
+        $this->info('Creating database if it does not exist...');
         $connectionName = config('database.default');
         $connection = config('database.connections')[$connectionName];
         $schemaName = $connection['database'];
@@ -39,7 +40,7 @@ class DatabaseCreateCommand extends Command
             throw new InvalidArgumentException('Missing Database Name');
         }
         $query = sprintf(
-            'CREATE DATABASE IF NOT EXISTS %s CHARACTER SET %s COLLATE %s;',
+            'CREATE DATABASE IF NOT EXISTS `%s` CHARACTER SET `%s` COLLATE `%s`;',
             $schemaName,
             $connection['charset'],
             $connection['collation']
