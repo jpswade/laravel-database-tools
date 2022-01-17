@@ -10,6 +10,7 @@
         }
     ],
     "require-dev": {
+        "roave/security-advisories": "dev-latest",
         "phpunit/phpunit": "^6.0"
     },
     "autoload": {
@@ -24,8 +25,12 @@
             ]
         }
     },
-  "require": {
-    "php": "^7.2",
-    "ext-fileinfo": "*"
-  }
+    "require": {
+        "php": "^7.2",
+        "illuminate/support": "*",
+        "illuminate/console": "*",
+        "illuminate/filesystem": "*",
+        "laravel/framework": "*",
+        "ext-fileinfo": "*"
+    }
 }
