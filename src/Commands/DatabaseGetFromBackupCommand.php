@@ -144,7 +144,7 @@ class DatabaseGetFromBackupCommand extends Command
     private function getBackupPath(): string
     {
         $config = Config::get('dbtools');
-        if (empty($config(['filesystem']['path'])) === false) {
+        if (empty($config['filesystem']['path'] === false)) {
             return config('dbtools.filesystem.path');
         }
         $backupConfig = Config::get('backup');
