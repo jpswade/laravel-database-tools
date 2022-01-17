@@ -32,6 +32,7 @@
         "illuminate/filesystem": "*",
         "laravel/framework": "~5.1|6.*|7.*|8.*",
         "ext-fileinfo": "*",
-        "spatie/db-dumper": "^2.21"
+        "spatie/db-dumper": "^2.21",
+        "ext-zip": "*"
     }
 }
