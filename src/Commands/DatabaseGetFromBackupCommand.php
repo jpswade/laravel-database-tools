@@ -145,12 +145,9 @@ class DatabaseGetFromBackupCommand extends Command
         }
         if ($this->getExtension($file) === self::ZIP_EXTENSION) {
             $this->info("Unzipping '$filename'...");
-            $this->unzip($file);
+            $files = $this->unzip($file);
         }
-        $filePath = self::SQL_FILE_PATTERN;
-        $storageFilePath = $this->getTargetFile(self::DB_DUMPS_DIRECTORY . DIRECTORY_SEPARATOR . $filePath);
-        $glob = glob($storageFilePath);
-        return array_shift($glob);
+        return array_shift($files);
     }
 
     /**
@@ -170,13 +167,13 @@ class DatabaseGetFromBackupCommand extends Command
         return $backupPath;
     }
 
-    private function unzip(string $filename): void
+    private function unzip(string $filename): array
     {
         if (isset($this->config['get']['method']) && $this->config['get']['method'] === 'command') {
             exec(sprintf('unzip %s -d %s', storage_path($filename), storage_path()));
         } else {
             $unzip = new Unzip();
-            $unzip($filename, storage_path());
+            return $unzip($filename, storage_path());
         }
         $unzippedFileName = '-';
         $unzippedFile = $this->getTargetFile($unzippedFileName);
@@ -184,6 +181,7 @@ class DatabaseGetFromBackupCommand extends Command
             $this->info("Renaming '$unzippedFileName' to '$filename'...");
             rename($unzippedFile, $filename);
         }
+        return $this->getSqlFiles();
     }
 
     /**
@@ -203,5 +201,16 @@ class DatabaseGetFromBackupCommand extends Command
     private function getExtension($basename)
     {
         return pathinfo($basename, FILEINFO_EXTENSION);
+    }
+
+    /**
+     * @return array|false
+     */
+    private function getSqlFiles()
+    {
+        $filePath = self::SQL_FILE_PATTERN;
+        $storageFilePath = $this->getTargetFile(self::DB_DUMPS_DIRECTORY . DIRECTORY_SEPARATOR . $filePath);
+        $glob = glob($storageFilePath);
+        return $glob;
     }
 }
