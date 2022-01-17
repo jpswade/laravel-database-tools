@@ -2,6 +2,7 @@
 
 namespace Jpswade\LaravelDatabaseTools\Commands;
 
+use File;
 use Illuminate\Console\Command;
 use Jpswade\LaravelDatabaseTools\ServiceProvider;
 use Spatie\DbDumper\Databases\MySql;
@@ -35,13 +36,14 @@ class DatabaseDumpCommand extends Command
     public function handle(): int
     {
         $config = config(ServiceProvider::CONFIG_KEY . '.database');
-        $fields = ['host', 'database', 'username', 'password'];
+        $fields = ['host', 'port', 'database', 'username', 'password'];
         foreach ($fields as $field) {
             if (empty($config[$field])) {
                 $this->error('Missing ' . $field);
             }
         }
         $host = $config['host'];
+        $port = $config['port'];
         $schemaName = $config['database'];
         $userName = $config['username'];
         $password = $config['password'];
@@ -49,10 +51,11 @@ class DatabaseDumpCommand extends Command
         $nowTime = now()->format('YmdHis');
         $filename = sprintf('%s-%s.sql', $schemaName, $nowTime);
         $outputFile = storage_path($filename);
-        $message = sprintf('[%s] Starting fetching from %s@%s/%s to %s', $env, $userName, $host, $schemaName, $outputFile);
+        $message = sprintf('[%s] Starting fetching from %s@%s:%d/%s to %s', $env, $userName, $host, $port, $schemaName, $outputFile);
         $this->info($message);
         $mysqlDumper = MySql::create()
             ->setHost($host)
+            ->setPort($port)
             ->setDbName($schemaName)
             ->setUserName($userName)
             ->setPassword($password)
@@ -60,14 +63,15 @@ class DatabaseDumpCommand extends Command
         $tempFileHandle = tmpfile();
         $process = $this->dumpToFile($mysqlDumper, $outputFile, $tempFileHandle);
         $process->start();
-        $this->output->progressStart();
+        $bar = $this->output->createProgressBar();
+        $bar->setFormat('verbose');
         while ($process->isRunning()) {
             sleep(1);
             clearstatcache(true, $outputFile);
-            $size = filesize($outputFile);
-            $this->output->progressAdvance($size);
+            $size = File::size($outputFile);
+            $bar->advance($size);
         }
-        $this->output->progressFinish();
+        $bar->finish();
         if (!$process->isSuccessful()) {
             throw DumpFailed::processDidNotEndSuccessfully($process);
         }
@@ -87,7 +91,7 @@ class DatabaseDumpCommand extends Command
      *
      * @param MySql $mysqlDumper
      * @param string $dumpFile
-     * @param $tempFileHandle
+     * @param resource $tempFileHandle
      * @return Process
      */
     protected function dumpToFile(MySql $mysqlDumper, string $dumpFile, $tempFileHandle): Process
