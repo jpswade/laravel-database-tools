@@ -26,11 +26,11 @@
         }
     },
     "require": {
-        "php": "^7.2",
+        "php": "^7.2|8.0.*",
         "illuminate/support": "*",
         "illuminate/console": "*",
         "illuminate/filesystem": "*",
-        "laravel/framework": "*",
+        "laravel/framework": "~5.1|6.*|7.*|8.*",
         "ext-fileinfo": "*",
         "spatie/db-dumper": "^2.21"
     }
