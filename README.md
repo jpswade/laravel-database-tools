@@ -26,9 +26,13 @@ Publish and customise your own `dbtools.php` file.
 
 This allows you to set the source database and/or filesystem for the backup.
 
-* `dbtools.database` - Here you can define the source database for the `db:dump` command. 
-* `dbtools.filesystem` - Here you can define the source filesystem for the `db:getFromBackup` command.
+* `dbtools.database` - Define the source database for the `db:dump` command, similar to Laravel databases config.
+* `dbtools.filesystem` - Define the source filesystem for the `db:getFromBackup` command, similar to Laravel filesystems
+  config.
+* `dbtools.filesystem.path` - Define the path for the `db:getFromBackup` command.
 * `dbtools.import` - Here you can define the `method` (command or normal) for the `db:importFromFile` command.
+
+* The `db:getFromBackup` command falls back to the `spatie/laravel-backup` package for configuration.
 
 ## Usage
 
@@ -43,7 +47,7 @@ The commands are:
 
 These are limitations you'll come across if you use certain commands:
 
-* The `db:getFromBackup` command relies on the `spatie/laravel-backup` package for configuration.
-* The `db:getFromBackup` command relies on the `league/flysystem-aws-s3-v3 "^1.0"` package, when you use the [Amazon S3 Driver](https://laravel.com/docs/5.1/filesystem#configuration) as per the Laravel docs.
+* The `db:getFromBackup` command relies on the `league/flysystem-aws-s3-v3 "^1.0"` package, when you use
+  the [Amazon S3 Driver](https://laravel.com/docs/5.1/filesystem#configuration) as per the Laravel docs.
 * The `db:dump` command depends on `spatie/dbdumper`.
 * The commands have only been tested to work with MySQL at the moment, but could be extended to others.

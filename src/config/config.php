@@ -23,6 +23,7 @@ return [
         'secret' => env('AWS_SECRET_ACCESS_KEY'),
         'region' => env('AWS_DEFAULT_REGION', 'eu-west-1'),
         'bucket' => env('DB_AWS_BUCKET'),
+        'path' => env('DB_AWS_BUCKET_PATH'),
     ],
 
     'import' => ['method' => 'command']

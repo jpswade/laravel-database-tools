@@ -52,10 +52,6 @@ class DatabaseGetFromBackupCommand extends Command
     public function handle(): int
     {
         $this->backupPath = $this->getBackupPath();
-        if (empty($this->backupPath)) {
-            $this->error('Unable to get backup config, have you done `composer require spatie/laravel-backup`?');
-            return 1;
-        }
         $this->storage = $this->getFileSystem();
         $file = $this->argument('file');
         if (empty($file) === true) {
@@ -133,13 +129,18 @@ class DatabaseGetFromBackupCommand extends Command
         return array_shift($glob);
     }
 
-    /**
-     * @return string
-     */
     private function getBackupPath(): string
     {
+        $config = Config::get('dbtools');
+        if (empty($config(['filesystem']['path'])) === false) {
+            return config('dbtools.filesystem.path');
+        }
         $backupConfig = Config::get('backup');
-        return $backupConfig['backup']['name'];
+        $backupPath = $backupConfig['backup']['name'];
+        if (empty($backupPath)) {
+            throw new InvalidArgumentException('Unable to get backup config, have you done `composer require spatie/laravel-backup`?');
+        }
+        return $backupPath;
     }
 
     private function unzip(string $filename): void
