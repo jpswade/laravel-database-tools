@@ -171,12 +171,7 @@ class DatabaseGetFromBackupCommand extends Command
 
     private function unzip(string $filename): array
     {
-        if (isset($this->config['get']['method']) && $this->config['get']['method'] === 'command') {
-            exec(sprintf('unzip %s -d %s', storage_path($filename), storage_path()));
-        } else {
-            $unzip = new Unzip();
-            return $unzip($filename, storage_path());
-        }
+        $this->execUnzip($filename);
         $unzippedFileName = '-';
         $unzippedFile = $this->getTargetFile($unzippedFileName);
         if (file_exists($unzippedFile)) {
@@ -212,7 +207,11 @@ class DatabaseGetFromBackupCommand extends Command
     {
         $filePath = self::SQL_FILE_PATTERN;
         $storageFilePath = $this->getTargetFile(self::DB_DUMPS_DIRECTORY . DIRECTORY_SEPARATOR . $filePath);
-        $glob = glob($storageFilePath);
-        return $glob;
+        return glob($storageFilePath);
+    }
+
+    private function execUnzip(string $filename): void
+    {
+        exec(sprintf('unzip %s -d %s', storage_path($filename), storage_path()));
     }
 }
