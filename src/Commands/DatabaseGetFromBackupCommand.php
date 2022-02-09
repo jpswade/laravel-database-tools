@@ -69,7 +69,9 @@ class DatabaseGetFromBackupCommand extends Command
             $file = $this->getLatestFile();
         }
         $importFile = $this->fetchDatabaseArchive($file);
-        $this->info($importFile);
+        if ($importFile) {
+            $this->info($importFile);
+        }
         return 0;
     }
 
@@ -114,11 +116,11 @@ class DatabaseGetFromBackupCommand extends Command
 
     /**
      * @param string|null $filename
-     * @return string
+     * @return ?string
      * @throws \Illuminate\Contracts\Filesystem\FileNotFoundException
      * @throws \League\Flysystem\FileNotFoundException
      */
-    private function fetchDatabaseArchive(string $filename = null): string
+    private function fetchDatabaseArchive(string $filename = null): ?string
     {
         $backupPath = $this->backupPath;
         $path = $backupPath . DIRECTORY_SEPARATOR . $filename;
@@ -133,6 +135,10 @@ class DatabaseGetFromBackupCommand extends Command
             $this->info("File '$filename' does not exist, downloading...'");
             $storage = $this->storage;
             $size = $storage->getSize($path);
+            if ($size === 0) {
+                $this->error(sprintf('Unable to continue, file %s is empty.', $path));
+                return null;
+            }
             $this->info(sprintf("Getting '%s', %d bytes", $filename, $size));
             $content = $storage->get($path);
             $this->info(sprintf("Got '%s', %d in length", $filename, strlen($content)));
