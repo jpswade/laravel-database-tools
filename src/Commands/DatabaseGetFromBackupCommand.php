@@ -123,7 +123,7 @@ class DatabaseGetFromBackupCommand extends Command
     private function fetchDatabaseArchive(string $filename = null): ?string
     {
         $backupPath = $this->backupPath;
-        $path = $backupPath . DIRECTORY_SEPARATOR . $filename;
+        $path = implode(DIRECTORY_SEPARATOR, [$backupPath, $filename]);
         $file = $this->getTargetFile($filename);
         if (file_exists($file) === true) {
             $this->warn("File '$file' already exists.'");
