@@ -156,7 +156,7 @@ class DatabaseGetFromBackupCommand extends Command
     private function getBackupPath(): string
     {
         $config = $this->config;
-        if (empty($config['filesystem']['path'] === false)) {
+        if (empty($config['filesystem']['path']) === false) {
             return $config['filesystem']['path'];
         }
         $backupConfig = Config::get('backup');
