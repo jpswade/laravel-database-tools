@@ -42,9 +42,9 @@ class DatabaseGetFromBackupCommand extends Command
     private $storage;
 
     /**
-     * @var string
+     * @var null|string
      */
-    private $backupPath;
+    private $backupPath = null;
 
     /**
      * @var array
@@ -63,10 +63,6 @@ class DatabaseGetFromBackupCommand extends Command
     {
         $this->config = $config::get(ServiceProvider::CONFIG_KEY);
         $this->backupPath = $this->getBackupPath();
-        if (empty($this->backupPath)) {
-            $this->error('Unable to get backup config, have you done `composer require spatie/laravel-backup`?');
-            return 1;
-        }
         $this->storage = $this->getFileSystem();
         $file = $this->argument('file');
         if (empty($file) === true) {
