@@ -59,7 +59,8 @@ class DatabaseDumpCommand extends Command
             ->setDbName($schemaName)
             ->setUserName($userName)
             ->setPassword($password)
-            ->setGtidPurged('OFF');
+            ->setGtidPurged('OFF')
+            ->addExtraOption('--no-tablespaces');
         $tempFileHandle = tmpfile();
         $process = $this->dumpToFile($mysqlDumper, $outputFile, $tempFileHandle);
         $process->start();
