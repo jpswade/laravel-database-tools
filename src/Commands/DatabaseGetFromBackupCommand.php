@@ -141,7 +141,7 @@ class DatabaseGetFromBackupCommand extends Command
             }
             $this->info(sprintf("Getting '%s', %d bytes", $filename, $size));
             $content = $storage->get($path);
-            $this->info(sprintf("Got '%s', %d in length", $filename, strlen($content)));
+            $this->info(sprintf("Got '%s', %d in length, saving to '%s'", $filename, strlen($content), $file));
             $bytes = file_put_contents($file, $content);
             $this->info(sprintf("Put '%s', wrote %d bytes", $filename, $bytes));
         }
