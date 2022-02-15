@@ -140,10 +140,11 @@ class DatabaseGetFromBackupCommand extends Command
                 return null;
             }
             $this->info(sprintf("Getting '%s', %d bytes", $filename, $size));
-            $content = $storage->get($path);
             $filePath = storage_path($filename);
-            $this->info(sprintf("Got '%s', %d in length, saving to '%s'", $filename, strlen($content), $filePath));
-            $bytes = file_put_contents($filePath, $content);
+            $this->info(sprintf("Reading stream from '%s'", $filename));
+            $stream = $storage->readStream($path);
+            $this->info(sprintf("Saving to '%s'", $filePath));
+            $bytes = file_put_contents($filePath, stream_get_contents($stream), FILE_APPEND);
             $this->info(sprintf("Put '%s', wrote %d bytes", $filename, $bytes));
         }
         if ($this->getExtension($file) === self::ZIP_EXTENSION) {
