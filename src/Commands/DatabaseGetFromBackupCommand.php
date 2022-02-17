@@ -147,11 +147,13 @@ class DatabaseGetFromBackupCommand extends Command
             $bytes = file_put_contents($filePath, stream_get_contents($stream), FILE_APPEND);
             $this->info(sprintf("Put '%s', wrote %d bytes", $filename, $bytes));
         }
-        if ($this->getExtension($file) === self::ZIP_EXTENSION) {
+        if ($this->isZipFile($filename)) {
             $this->info("Unzipping '$filename'...");
-            $files = $this->unzip($file);
+            $filePath = storage_path($filename);
+            $files = $this->unzip($filePath);
+            $file = array_shift($files);
         }
-        return array_shift($files);
+        return $file;
     }
 
     /**
@@ -199,7 +201,8 @@ class DatabaseGetFromBackupCommand extends Command
      */
     private function getExtension($basename)
     {
-        return pathinfo($basename, FILEINFO_EXTENSION);
+        $array = explode('.', $basename);
+        return array_pop($array);
     }
 
     /**
@@ -208,12 +211,23 @@ class DatabaseGetFromBackupCommand extends Command
     private function getSqlFiles()
     {
         $filePath = self::SQL_FILE_PATTERN;
-        $storageFilePath = $this->getTargetFile(self::DB_DUMPS_DIRECTORY . DIRECTORY_SEPARATOR . $filePath);
+        $storageFilePath = storage_path(self::DB_DUMPS_DIRECTORY . DIRECTORY_SEPARATOR . $filePath);
         return glob($storageFilePath);
     }
 
-    private function execUnzip(string $filename): void
+    private function execUnzip(string $filename, $targetDirectory = null): void
     {
-        exec(sprintf('unzip %s -d %s', storage_path($filename), storage_path()));
+        $targetDirectory = $targetDirectory ?: storage_path();
+        $sourceFile = $filename[0] === DIRECTORY_SEPARATOR ? $filename : storage_path($filename);
+        exec(sprintf('unzip %s -d %s', $sourceFile, $targetDirectory));
+    }
+
+    /**
+     * @param string $file
+     * @return bool
+     */
+    private function isZipFile(string $file): bool
+    {
+        return $this->getExtension($file) === self::ZIP_EXTENSION;
     }
 }
