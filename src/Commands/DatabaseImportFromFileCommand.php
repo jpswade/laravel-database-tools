@@ -9,6 +9,7 @@ use InvalidArgumentException;
 use Jpswade\LaravelDatabaseTools\ServiceProvider;
 use League\Flysystem\FileNotFoundException;
 use Illuminate\Support\Facades\Schema;
+use RuntimeException;
 use Symfony\Component\Process\Process;
 
 class DatabaseImportFromFileCommand extends Command
@@ -42,7 +43,7 @@ class DatabaseImportFromFileCommand extends Command
     {
         $force = $this->option('force');
         if ($force === false && app()->environment() === 'production') {
-            throw new \RuntimeException('Cannot be run in a production environment.');
+            throw new RuntimeException('Cannot be run in a production environment.');
         }
         $connection = $this->checkConnection();
         $this->checkMaxAllowedPacket();
@@ -86,7 +87,7 @@ class DatabaseImportFromFileCommand extends Command
             if ($result) {
                 $this->comment('Max allowed packet was increased to ' . self::MAX_ALLOWED_PACKET);
             } else {
-                throw new \RuntimeException('Unable to increase max allowed packet.');
+                throw new RuntimeException('Unable to increase max allowed packet.');
             }
         }
     }
@@ -101,7 +102,7 @@ class DatabaseImportFromFileCommand extends Command
             if ($result) {
                 $this->comment('Foreign Key Check is now set to OFF.');
             } else {
-                throw new \RuntimeException('Failed to set to OFF.');
+                throw new RuntimeException('Failed to set to OFF.');
             }
         } else {
             $this->comment('Foreign Key Check is already set OFF.');
@@ -178,7 +179,7 @@ class DatabaseImportFromFileCommand extends Command
         }
         $bar->finish();
         if (!$process->isSuccessful()) {
-            throw new \RuntimeException("The import process failed with exitcode {$process->getExitCode()} : {$process->getExitCodeText()} : {$process->getErrorOutput()}");
+            throw new RuntimeException("The import process failed with exitcode {$process->getExitCode()} : {$process->getExitCodeText()} : {$process->getErrorOutput()}");
         }
     }
 
