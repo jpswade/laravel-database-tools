@@ -7,6 +7,7 @@ use Illuminate\Filesystem\FilesystemManager;
 use Illuminate\Support\Facades\Config;
 use InvalidArgumentException;
 use Jpswade\LaravelDatabaseTools\ServiceProvider;
+use RuntimeException;
 
 class DatabaseGetFromBackupCommand extends DatabaseCommand
 {
@@ -87,15 +88,15 @@ class DatabaseGetFromBackupCommand extends DatabaseCommand
         $backupPath = $this->backupPath;
         $list = $this->storage->listContents($backupPath);
         if (empty($list)) {
-            throw new \RuntimeException('No files available');
+            throw new RuntimeException('No files available');
         }
         $files = collect($list);
         $files->sortByDesc('timestamp')->reject(function ($file) {
             return in_array($this->getExtension($file['basename']), [self::ZIP_EXTENSION, self::SQL_EXTENSION], false) === false;
         });
-        $file = $files->first();
+        $file = $files->last();
         if ($file === null) {
-            throw new \RuntimeException('Unable to get latest file');
+            throw new RuntimeException('Unable to get latest file');
         }
         return $file['basename'];
     }
