@@ -2,7 +2,6 @@
 
 namespace Jpswade\LaravelDatabaseTools\Commands;
 
-use Illuminate\Console\Command;
 use Illuminate\Support\Facades\DB;
 use InvalidArgumentException;
 
@@ -10,7 +9,7 @@ use InvalidArgumentException;
  * Creates the database schema.
  * @see https://github.com/laravel/framework/issues/19412
  */
-class DatabaseCreateCommand extends Command
+class DatabaseCreateCommand extends DatabaseCommand
 {
     /**
      * The console command signature.

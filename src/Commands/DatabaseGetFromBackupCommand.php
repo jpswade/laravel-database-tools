@@ -2,28 +2,14 @@
 
 namespace Jpswade\LaravelDatabaseTools\Commands;
 
-use Illuminate\Console\Command;
 use Illuminate\Contracts\Filesystem\Filesystem;
 use Illuminate\Filesystem\FilesystemManager;
 use Illuminate\Support\Facades\Config;
 use InvalidArgumentException;
 use Jpswade\LaravelDatabaseTools\ServiceProvider;
-use Jpswade\LaravelDatabaseTools\Unzip;
 
-class DatabaseGetFromBackupCommand extends Command
+class DatabaseGetFromBackupCommand extends DatabaseCommand
 {
-    /** @var string @see https://github.com/spatie/laravel-backup/blob/11eb9f82bc0bd25ec69f5c169dde07290d913ce8/src/Tasks/Backup/BackupJob.php#L270 */
-    public const DB_DUMPS_DIRECTORY = 'db-dumps';
-
-    /** @var string */
-    public const SQL_EXTENSION = 'sql';
-
-    /** @var string */
-    public const SQL_FILE_PATTERN = '*.' . self::SQL_EXTENSION;
-
-    /** @var string */
-    public const ZIP_EXTENSION = 'zip';
-
     /**
      * The name and signature of the console command.
      *
@@ -156,9 +142,6 @@ class DatabaseGetFromBackupCommand extends Command
         return $file;
     }
 
-    /**
-     * @return string
-     */
     private function getBackupPath(): string
     {
         $config = $this->config;
@@ -203,16 +186,6 @@ class DatabaseGetFromBackupCommand extends Command
     {
         $array = explode('.', $basename);
         return array_pop($array);
-    }
-
-    /**
-     * @return array|false
-     */
-    private function getSqlFiles()
-    {
-        $filePath = self::SQL_FILE_PATTERN;
-        $storageFilePath = storage_path(self::DB_DUMPS_DIRECTORY . DIRECTORY_SEPARATOR . $filePath);
-        return glob($storageFilePath);
     }
 
     private function execUnzip(string $filename, $targetDirectory = null): void

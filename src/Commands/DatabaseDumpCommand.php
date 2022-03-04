@@ -2,14 +2,12 @@
 
 namespace Jpswade\LaravelDatabaseTools\Commands;
 
-use File;
-use Illuminate\Console\Command;
 use Jpswade\LaravelDatabaseTools\ServiceProvider;
 use Spatie\DbDumper\Databases\MySql;
 use Spatie\DbDumper\Exceptions\DumpFailed;
 use Symfony\Component\Process\Process;
 
-class DatabaseDumpCommand extends Command
+class DatabaseDumpCommand extends DatabaseCommand
 {
     private const TIMEOUT = 0;
 

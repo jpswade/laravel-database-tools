@@ -2,7 +2,6 @@
 
 namespace Jpswade\LaravelDatabaseTools\Commands;
 
-use Illuminate\Console\Command;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\File;
 use InvalidArgumentException;
@@ -12,7 +11,7 @@ use Illuminate\Support\Facades\Schema;
 use RuntimeException;
 use Symfony\Component\Process\Process;
 
-class DatabaseImportFromFileCommand extends Command
+class DatabaseImportFromFileCommand extends DatabaseCommand
 {
     /** @var int */
     public const SECONDS_DELAY = 10;
@@ -128,11 +127,9 @@ class DatabaseImportFromFileCommand extends Command
         return $importFile;
     }
 
-    private static function getLatestSqlFile(): ?string
+    private function getLatestSqlFile(): ?string
     {
-        $filePath = '*.sql';
-        $storageFilePath = storage_path($filePath);
-        $files = glob($storageFilePath);
+        $files = $this->getSqlFiles();
         $files = array_combine(array_map('filemtime', $files), $files);
         krsort($files);
         return array_shift($files);
