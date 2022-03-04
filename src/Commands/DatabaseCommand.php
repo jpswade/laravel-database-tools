@@ -24,7 +24,13 @@ class DatabaseCommand extends Command
     protected function getSqlFiles()
     {
         $filePath = self::SQL_FILE_PATTERN;
-        $storageFilePath = storage_path(self::DB_DUMPS_DIRECTORY . DIRECTORY_SEPARATOR . $filePath);
+        $storageFilePath = $this->getStoragePath($filePath);
         return glob($storageFilePath);
+    }
+
+    protected function getStoragePath(string $filePath): string
+    {
+        $path = storage_path(self::DB_DUMPS_DIRECTORY);
+        return $path . DIRECTORY_SEPARATOR . $filePath;
     }
 }

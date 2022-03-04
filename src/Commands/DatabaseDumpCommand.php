@@ -2,6 +2,7 @@
 
 namespace Jpswade\LaravelDatabaseTools\Commands;
 
+use Illuminate\Support\Facades\File;
 use Jpswade\LaravelDatabaseTools\ServiceProvider;
 use Spatie\DbDumper\Databases\MySql;
 use Spatie\DbDumper\Exceptions\DumpFailed;
@@ -48,7 +49,7 @@ class DatabaseDumpCommand extends DatabaseCommand
         $env = strtoupper(config('app.env'));
         $nowTime = now()->format('YmdHis');
         $filename = sprintf('%s-%s.sql', $schemaName, $nowTime);
-        $outputFile = storage_path($filename);
+        $outputFile = $this->getStoragePath($filename);
         $message = sprintf('[%s] Starting fetching from %s@%s:%d/%s to %s', $env, $userName, $host, $port, $schemaName, $outputFile);
         $this->info($message);
         $mysqlDumper = MySql::create()
