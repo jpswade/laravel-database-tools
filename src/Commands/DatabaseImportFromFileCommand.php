@@ -127,7 +127,7 @@ class DatabaseImportFromFileCommand extends Command
         return $importFile;
     }
 
-    private static function getLatestSqlFile(): string
+    private static function getLatestSqlFile(): ?string
     {
         $filePath = '*.sql';
         $storageFilePath = storage_path($filePath);
