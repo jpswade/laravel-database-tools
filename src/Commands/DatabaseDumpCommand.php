@@ -62,6 +62,7 @@ class DatabaseDumpCommand extends DatabaseCommand
             ->skipLockTables()
             ->addExtraOption('--no-tablespaces');
         $tempFileHandle = tmpfile();
+        $this->checkFilePathExists(dirname($outputFile));
         $process = $this->dumpToFile($mysqlDumper, $outputFile, $tempFileHandle);
         $process->start();
         $bar = $this->output->createProgressBar();
@@ -101,5 +102,12 @@ class DatabaseDumpCommand extends DatabaseCommand
         $temporaryCredentialsFile = stream_get_meta_data($tempFileHandle)['uri'];
         $command = $mysqlDumper->getDumpCommand($dumpFile, $temporaryCredentialsFile);
         return Process::fromShellCommandline($command, null, null, null, self::TIMEOUT);
+    }
+
+    private function checkFilePathExists(string $directory)
+    {
+        if (!is_dir($directory)) {
+            mkdir($directory, 0755, true);
+        }
     }
 }
