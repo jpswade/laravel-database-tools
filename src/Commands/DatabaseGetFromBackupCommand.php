@@ -11,40 +11,25 @@ use RuntimeException;
 
 class DatabaseGetFromBackupCommand extends DatabaseCommand
 {
-    /**
-     * The name and signature of the console command.
-     *
-     * @var string
-     */
+    /** @var string The name and signature of the console command. */
     protected $signature = 'db:getFromBackup {file?}';
 
-    /**
-     * The console command description.
-     *
-     * @var string
-     */
+    /** @var string The console command description. */
     protected $description = 'Get database backup file from backup.';
 
     /** @var Filesystem $storage */
     private $storage;
 
-    /**
-     * @var null|string
-     */
+    /** @var null|string */
     private $backupPath = null;
 
-    /**
-     * @var array
-     */
+    /** @var array */
     private $config;
 
     /**
      * Execute the console command.
      *
-     * @param Config $config
-     * @return int
      * @throws \Illuminate\Contracts\Filesystem\FileNotFoundException
-     * @throws \League\Flysystem\FileNotFoundException
      */
     public function handle(Config $config): int
     {
@@ -72,7 +57,7 @@ class DatabaseGetFromBackupCommand extends DatabaseCommand
     {
         $config = $this->config['filesystem'];
         if (empty($config['driver'])) {
-            throw new InvalidArgumentException("Does not have a configured driver.");
+            throw new InvalidArgumentException('Does not have a configured driver.');
         }
         $name = $config['driver'];
         $driverMethod = 'create' . ucfirst($name) . 'Driver';
@@ -83,10 +68,13 @@ class DatabaseGetFromBackupCommand extends DatabaseCommand
         return $filesystem->{$driverMethod}($config);
     }
 
+    /**
+     * @throws \Illuminate\Contracts\Filesystem\FileNotFoundException
+     */
     private function getLatestFile(): string
     {
         $backupPath = $this->backupPath;
-        $list = $this->storage->listContents($backupPath);
+        $list = $this->storage->get($backupPath);
         if (empty($list)) {
             throw new RuntimeException('No files available');
         }
@@ -102,10 +90,7 @@ class DatabaseGetFromBackupCommand extends DatabaseCommand
     }
 
     /**
-     * @param string|null $filename
-     * @return ?string
      * @throws \Illuminate\Contracts\Filesystem\FileNotFoundException
-     * @throws \League\Flysystem\FileNotFoundException
      */
     private function fetchDatabaseArchive(string $filename = null): ?string
     {
@@ -121,13 +106,13 @@ class DatabaseGetFromBackupCommand extends DatabaseCommand
         } else {
             $this->info("File '$filename' does not exist, downloading...'");
             $storage = $this->storage;
-            $size = $storage->getSize($path);
+            $size = $storage->size($path);
             if ($size === 0) {
                 $this->error(sprintf('Unable to continue, file %s is empty.', $path));
                 return null;
             }
             $this->info(sprintf("Getting '%s', %d bytes", $filename, $size));
-            $filePath = storage_path($filename);
+            $filePath = $this->storagePath($filename);
             $this->info(sprintf("Reading stream from '%s'", $filename));
             $stream = $storage->readStream($path);
             $this->info(sprintf("Saving to '%s'", $filePath));
@@ -136,7 +121,7 @@ class DatabaseGetFromBackupCommand extends DatabaseCommand
         }
         if ($this->isZipFile($filename)) {
             $this->info("Unzipping '$filename'...");
-            $filePath = storage_path($filename);
+            $filePath = $this->storagePath($filename);
             $files = $this->unzip($filePath);
             $file = array_shift($files);
         }
@@ -169,39 +154,31 @@ class DatabaseGetFromBackupCommand extends DatabaseCommand
         return $this->getSqlFiles();
     }
 
-    /**
-     * @param string|null $filename
-     * @return string
-     */
     private function getTargetFile(?string $filename): string
     {
         $importFilename = pathinfo($filename, PATHINFO_FILENAME) . '.' . self::SQL_EXTENSION;
-        return storage_path($importFilename);
+        return $this->storagePath($importFilename);
     }
 
-    /**
-     * @param $basename
-     * @return array|string|string[]
-     */
-    private function getExtension($basename)
+    private function getExtension(string $basename): string
     {
         $array = explode('.', $basename);
         return array_pop($array);
     }
 
-    private function execUnzip(string $filename, $targetDirectory = null): void
+    private function execUnzip(string $filename): void
     {
-        $targetDirectory = $targetDirectory ?: storage_path();
-        $sourceFile = $filename[0] === DIRECTORY_SEPARATOR ? $filename : storage_path($filename);
-        exec(sprintf('unzip %s -d %s', $sourceFile, $targetDirectory));
+        $sourceFile = $filename[0] === DIRECTORY_SEPARATOR ? $filename : $this->storagePath($filename);
+        exec(sprintf('unzip %s -d %s', $sourceFile, $this->storagePath()));
     }
 
-    /**
-     * @param string $file
-     * @return bool
-     */
     private function isZipFile(string $file): bool
     {
         return $this->getExtension($file) === self::ZIP_EXTENSION;
+    }
+
+    private function storagePath(string $path = ''): string
+    {
+        return storage_path($path);
     }
 }
