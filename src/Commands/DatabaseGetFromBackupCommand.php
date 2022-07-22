@@ -44,7 +44,7 @@ class DatabaseGetFromBackupCommand extends DatabaseCommand
         if ($importFile) {
             $this->info($importFile);
         }
-        return 0;
+        return self::SUCCESS;
     }
 
     /**
@@ -175,10 +175,5 @@ class DatabaseGetFromBackupCommand extends DatabaseCommand
     private function isZipFile(string $file): bool
     {
         return $this->getExtension($file) === self::ZIP_EXTENSION;
-    }
-
-    private function storagePath(string $path = ''): string
-    {
-        return storage_path($path);
     }
 }
