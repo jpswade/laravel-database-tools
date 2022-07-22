@@ -2,7 +2,7 @@
 
 namespace Jpswade\LaravelDatabaseTools\Commands;
 
-use Illuminate\Contracts\Filesystem\Filesystem;
+use Illuminate\Filesystem\FilesystemAdapter;
 use Illuminate\Filesystem\FilesystemManager;
 use Illuminate\Support\Facades\Config;
 use InvalidArgumentException;
@@ -17,7 +17,7 @@ class DatabaseGetFromBackupCommand extends DatabaseCommand
     /** @var string The console command description. */
     protected $description = 'Get database backup file from backup.';
 
-    /** @var Filesystem $storage */
+    /** @var FilesystemAdapter $storage */
     private $storage;
 
     /** @var null|string */
@@ -53,7 +53,7 @@ class DatabaseGetFromBackupCommand extends DatabaseCommand
      * We do this dynamically, rather than use a disk instance as defined in the filesystems.php
      * configuration file directly, so that we can switch between buckets easily.
      */
-    private function getFileSystem(): Filesystem
+    private function getFileSystem(): FilesystemAdapter
     {
         $config = $this->config['filesystem'];
         if (empty($config['driver'])) {
@@ -68,19 +68,16 @@ class DatabaseGetFromBackupCommand extends DatabaseCommand
         return $filesystem->{$driverMethod}($config);
     }
 
-    /**
-     * @throws \Illuminate\Contracts\Filesystem\FileNotFoundException
-     */
     private function getLatestFile(): string
     {
         $backupPath = $this->backupPath;
-        $list = $this->storage->get($backupPath);
+        $list = $this->storage->listContents($backupPath);
         if (empty($list)) {
-            throw new RuntimeException('No files available');
+            throw new RuntimeException('No files available at '. $backupPath);
         }
         $files = collect($list);
-        $files->sortByDesc('timestamp')->reject(function ($file) {
-            return in_array($this->getExtension($file['basename']), [self::ZIP_EXTENSION, self::SQL_EXTENSION], false) === false;
+        $files = $files->sortBy('timestamp')->reject(function (array $file) {
+            return in_array(strtolower($file['extension']), [self::ZIP_EXTENSION, self::SQL_EXTENSION], true) === false;
         });
         $file = $files->last();
         if ($file === null) {
