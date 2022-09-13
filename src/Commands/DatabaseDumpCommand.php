@@ -49,7 +49,7 @@ class DatabaseDumpCommand extends DatabaseCommand
         $env = strtoupper(config('app.env'));
         $nowTime = now()->format('YmdHis');
         $filename = sprintf('%s-%s.sql', $schemaName, $nowTime);
-        $outputFile = $this->getStoragePath($filename);
+        $outputFile = $this->getDumpPath($filename);
         $message = sprintf('[%s] Starting fetching from %s@%s:%d/%s to %s', $env, $userName, $host, $port, $schemaName, $outputFile);
         $this->info($message);
         $mysqlDumper = MySql::create()
