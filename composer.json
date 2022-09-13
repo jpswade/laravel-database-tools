@@ -26,13 +26,17 @@
         }
     },
     "require": {
-        "php": "^7.2|8.0.*",
+        "php": "^7.4|8.*",
         "illuminate/support": "*",
         "illuminate/console": "*",
         "illuminate/filesystem": "*",
-        "laravel/framework": "~5.1|6.*|7.*|8.*",
+        "laravel/framework": "~5.1|6.*|7.*|8.*|9.*",
         "ext-fileinfo": "*",
         "spatie/db-dumper": "^2.21",
         "ext-zip": "*"
+    },
+    "suggest": {
+        "league/flysystem-aws-s3-v3": "Needed for db:getFromBackup command to use the S3 Driver.",
+        "spatie/db-dumper": "Needed for db:dump command to use the S3 Driver."
     }
 }
