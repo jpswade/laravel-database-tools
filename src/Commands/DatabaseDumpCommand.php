@@ -28,8 +28,6 @@ class DatabaseDumpCommand extends DatabaseCommand
 
     /**
      * Execute the console command.
-     *
-     * @return int
      * @throws DumpFailed
      */
     public function handle(): int
@@ -85,16 +83,11 @@ class DatabaseDumpCommand extends DatabaseCommand
         }
         $message = 'Created MySql Dump outputFile: ' . $outputFile;
         $this->info($message);
-        return 0;
+        return self::SUCCESS;
     }
 
     /**
      * Dump the contents of the database to the given file.
-     *
-     * @param MySql $mysqlDumper
-     * @param string $dumpFile
-     * @param resource $tempFileHandle
-     * @return Process
      */
     protected function dumpToFile(MySql $mysqlDumper, string $dumpFile, $tempFileHandle): Process
     {
