@@ -2,7 +2,8 @@
 
 namespace Jpswade\LaravelDatabaseTools\Commands;
 
-use Illuminate\Support\Facades\DB;
+use Illuminate\Config\Repository;
+use Illuminate\Database\DatabaseManager as DB;
 use InvalidArgumentException;
 
 /**
@@ -27,28 +28,23 @@ class DatabaseCreateCommand extends DatabaseCommand
 
     /**
      * Execute the console command.
-     * @return int
      */
-    public function handle(): int
+    public function handle(DB $db, Repository $config): int
     {
         $this->info('Creating database if it does not exist...');
-        $connectionName = config('database.default');
-        $connection = config('database.connections')[$connectionName];
+        $connectionName = $config->get('database.default');
+        $connection = $config->get('database.connections')[$connectionName];
         $schemaName = $connection['database'];
         if (empty($schemaName)) {
             throw new InvalidArgumentException('Missing Database Name');
         }
-        $query = sprintf(
-            'CREATE DATABASE IF NOT EXISTS `%s` CHARACTER SET `%s` COLLATE `%s`;',
-            $schemaName,
-            $connection['charset'],
-            $connection['collation']
-        );
-        config(["database.connections.{$connectionName}.database" => null]);
-        DB::reconnect('mysql');
-        DB::statement($query);
-        config(["database.connections.{$connectionName}.database" => $schemaName]);
+        $this->info(sprintf('Creating database "%s" via "%s" connection (if it does not exist)...', $schemaName, $connectionName));
+        $config->get(["database.connections.{$connectionName}.database" => null]);
+        $db->reconnect($connectionName);
+        $builder = $db->getSchemaBuilder();
+        $builder->createDatabase($schemaName);
+        $config->get(["database.connections.{$connectionName}.database" => $schemaName]);
         $this->info('Done');
-        return 0;
+        return self::SUCCESS;
     }
 }
