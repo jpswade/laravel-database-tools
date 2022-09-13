@@ -3,6 +3,7 @@
 namespace Jpswade\LaravelDatabaseTools;
 
 use Illuminate\Support\ServiceProvider as BaseProvider;
+use Jpswade\LaravelDatabaseTools\Commands\DatabaseCharSetCommand;
 use Jpswade\LaravelDatabaseTools\Commands\DatabaseCreateCommand;
 use Jpswade\LaravelDatabaseTools\Commands\DatabaseDumpCommand;
 use Jpswade\LaravelDatabaseTools\Commands\DatabaseGetFromBackupCommand;
@@ -13,6 +14,7 @@ class ServiceProvider extends BaseProvider
     public const CONFIG_KEY = 'dbtools';
 
     public const COMMANDS = [
+        DatabaseCharSetCommand::class,
         DatabaseCreateCommand::class,
         DatabaseDumpCommand::class,
         DatabaseGetFromBackupCommand::class,
