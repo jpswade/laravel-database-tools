@@ -3,7 +3,7 @@
 namespace Jpswade\LaravelDatabaseTools\Commands;
 
 use Illuminate\Database\DatabaseManager;
-use InvalidArgumentException;
+use Jpswade\LaravelDatabaseTools\Services\DatabaseCharSetService;
 
 /**
  * Updates the database tables to the charset and collation that you have configured.
@@ -11,12 +11,14 @@ use InvalidArgumentException;
  */
 class DatabaseCharSetCommand extends DatabaseCommand
 {
+    const COMMAND = 'db:charset';
+
     /**
      * The console command signature.
      *
      * @var string
      */
-    protected $signature = 'db:charset';
+    protected $signature = self::COMMAND;
 
     /**
      * The console command description.
@@ -34,63 +36,9 @@ class DatabaseCharSetCommand extends DatabaseCommand
         $schemaName = (string)$connection->getConfig('database');
         $charset = (string)$connection->getConfig('charset');
         $collation = (string)$connection->getConfig('collation');
-        $this->validate($schemaName, $charset, $collation);
-        $this->changeCharsetTo($db, $schemaName, $charset, $collation);
+        $service = new DatabaseCharSetService();
+        $service($db, $schemaName, $charset, $collation, $this->output);
         $this->info('Done');
         return self::SUCCESS;
-    }
-
-    protected function validate(string $schemaName, string $charset, string $collation): void
-    {
-        if (empty($schemaName)) {
-            throw new InvalidArgumentException('Database Name is not set');
-        }
-        if (empty($charset)) {
-            throw new InvalidArgumentException('Charset is not set');
-        }
-        if (empty($collation)) {
-            throw new InvalidArgumentException('Collation is not set');
-        }
-    }
-
-    protected function changeCharsetTo(DatabaseManager $db, string $databaseName, string $charset, string $collation)
-    {
-        $this->info("Changing the database {$databaseName} default charset to {$charset} and collation to {$collation}");
-        $db->unprepared("ALTER SCHEMA {$databaseName} DEFAULT CHARACTER SET {$charset} DEFAULT COLLATE {$collation};");
-
-        $this->info('Getting the list of all tables...');
-        $tableNames = $db->table('information_schema.tables')
-            ->where('table_schema', $databaseName)->get(['TABLE_NAME'])->pluck('TABLE_NAME');
-
-        $this->info('Iterate through the list and alter each table');
-        foreach ($tableNames as $tableName) {
-            $db->unprepared("ALTER TABLE {$tableName} CONVERT TO CHARACTER SET {$charset} COLLATE {$collation};");
-        }
-
-        $this->info('Getting the list of all columns that have a collation...');
-        $columns = $db->table('information_schema.columns')
-            ->where('table_schema', $databaseName)
-            ->whereNotNull('COLLATION_NAME')
-            ->get();
-
-        $this->info('Iterating through the list and alter each column...');
-        foreach ($columns as $column) {
-            $tableName = $column->TABLE_NAME;
-            $columnName = $column->COLUMN_NAME;
-            $columnType = $column->COLUMN_TYPE;
-
-            $null = 'DEFAULT NULL';
-            if ($column->IS_NULLABLE == 'NO') {
-                $null = 'NOT NULL';
-            }
-
-            $sql = "ALTER TABLE {$tableName}
-                    CHANGE `{$columnName}` `{$columnName}`
-                    {$columnType}
-                    CHARACTER SET {$charset}
-                    COLLATE {$collation}
-                    {$null}";
-            $db->unprepared($sql);
-        }
     }
 }
