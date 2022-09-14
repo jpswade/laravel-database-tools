@@ -8,6 +8,7 @@ With this package you can:
 - Dump from another database to file
 - Get and unzip from a database backup created by the [Spatie Backup package](https://github.com/spatie/laravel-backup)
 - Import from file
+- Update the charset and collation
 
 ## Install
 
@@ -32,6 +33,8 @@ This allows you to set the source database and/or filesystem for the backup.
 * `dbtools.filesystem.path` - Define the path for the `db:getFromBackup` command.
 * `dbtools.import` - Here you can define the `method` (command or normal) for the `db:importFromFile` command.
 
+Note:
+
 * The `db:getFromBackup` command falls back to the `spatie/laravel-backup` package for configuration.
 
 ## Usage
@@ -42,6 +45,7 @@ The commands are:
 * `db:dump` - Fetch a copy of the latest database from the configured server.
 * `db:getFromBackup` - Download database backup file from backup.
 * `db:importFromFile {file?}` - Import data from a sql file into a database.
+* `db:charset` - Changes the charset and collation to whatever the database is set to use.
 
 ## Limitations
 
