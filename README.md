@@ -9,6 +9,8 @@ With this package you can:
 - Get and unzip from a database backup created by the [Spatie Backup package](https://github.com/spatie/laravel-backup)
 - Import from file
 - Update the charset and collation
+- Fixes the "no such function" error by giving SQLite MySQL compatibility by creating the missing function using PDO for
+  SQLite using PHP functions.
 
 ## Install
 
@@ -21,7 +23,7 @@ environment.
 
 ## Configure
 
-Publish and customise your own `dbtools.php` file.
+Publish and customise your own `dbtools.php` file:
 
 * `php artisan vendor:publish --provider="Jpswade\LaravelDatabaseTools\ServiceProvider" --tag="config"`
 
@@ -46,6 +48,20 @@ The commands are:
 * `db:getFromBackup` - Download database backup file from backup.
 * `db:importFromFile {file?}` - Import data from a sql file into a database.
 * `db:charset` - Changes the charset and collation to whatever the database is set to use.
+
+### SQLite MySQL Compatability Provider
+
+Follow the usual [Registering Providers](https://laravel.com/docs/9.x/providers#registering-providers) instructions:
+
+In `config/app.php`, find the `providers` array and add:
+
+```shell
+'providers' => [
+    // Other Service Providers
+ 
+    Jpswade\LaravelDatabaseTools\SqliteMysqlCompatibilityProvider::class,
+],
+```
 
 ## Limitations
 

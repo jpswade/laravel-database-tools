@@ -38,7 +38,8 @@
         "laravel/framework": "~5.1|6.*|7.*|8.*|9.*",
         "ext-fileinfo": "*",
         "spatie/db-dumper": "^2.21",
-        "ext-zip": "*"
+        "ext-zip": "*",
+      "ext-pdo": "*"
     },
     "suggest": {
         "league/flysystem-aws-s3-v3": "Needed for db:getFromBackup command to use the S3 Driver.",
