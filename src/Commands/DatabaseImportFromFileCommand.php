@@ -80,7 +80,7 @@ class DatabaseImportFromFileCommand extends DatabaseCommand
         $result = DB::select($query);
         $value = (int)$result[0]->Value;
         if ($value < self::MAX_ALLOWED_PACKET) {
-            $this->warn('Max allowed packet is lower than expected increasing to ' . self::MAX_ALLOWED_PACKET);
+            $this->warn(sprintf('Max allowed packet is %d, lower than expected increasing to %d', $value, self::MAX_ALLOWED_PACKET));
             $query = 'SET GLOBAL max_allowed_packet=' . self::MAX_ALLOWED_PACKET;
             $result = DB::unprepared($query);
             if ($result) {
