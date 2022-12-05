@@ -15,6 +15,7 @@ return [
         'prefix_indexes' => true,
         'strict' => false,
         'engine' => null,
+        'is_maria' => null,
     ],
 
     'filesystem' => [
