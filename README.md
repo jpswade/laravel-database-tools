@@ -71,3 +71,9 @@ These are limitations you'll come across if you use certain commands:
   the [Amazon S3 Driver](https://laravel.com/docs/5.1/filesystem#configuration) as per the Laravel docs.
 * The `db:dump` command depends on `spatie/db-dumper`.
 * The commands have only been tested to work with MySQL at the moment, but could be extended to others.
+
+## Troubleshooting
+
+### Class 'League\Flysystem\AwsS3v3\AwsS3Adapter' not found
+
+```% composer require league/flysystem-aws-s3-v3:~1.0```
