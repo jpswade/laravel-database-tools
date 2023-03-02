@@ -13,42 +13,34 @@ use Symfony\Component\Process\Process;
 
 class DatabaseImportFromFileCommand extends DatabaseCommand
 {
-    /** @var int */
+    /** @var int Delay in seconds before starting the import */
     public const SECONDS_DELAY = 10;
 
+    /** @var int Maximum Allowed Packet to check for */
     private const MAX_ALLOWED_PACKET = 1000000000;
 
-    /**
-     * The name and signature of the console command.
-     *
-     * @var string
-     */
+    /** @var string The name and signature of the console command. */
     protected $signature = 'db:importFromFile {file?} {--force : Force the operation to run when in production}';
 
-    /**
-     * The console command description.
-     *
-     * @var string
-     */
+    /** @var string The console command description. */
     protected $description = 'Import data from a sql file into a database.';
 
-    /**
-     * Execute the console command.
-     *
-     * @return int
-     * @throws FileNotFoundException
-     */
     public function handle(): int
     {
         $force = $this->option('force');
         if ($force === false && app()->environment() === 'production') {
-            throw new RuntimeException('Cannot be run in a production environment.');
+            throw new RuntimeException('Cannot be run in a production environment');
         }
         $connection = $this->checkConnection();
         $this->checkMaxAllowedPacket();
         $this->setForeignKeyCheckOff();
         $importFile = $this->argument('file');
-        $importFile = $this->getImportFile($importFile);
+        try {
+            $importFile = $this->getImportFile($importFile);
+        } catch (\Exception $e) {
+            $this->error($e->getMessage());
+            return self::FAILURE;
+        }
         $env = strtoupper(app()->environment());
         $message = sprintf('[%s] Starting import from %s to %s@%s:%s/%s in %d seconds', $env, $importFile, $connection['username'], $connection['host'], $connection['port'], $connection['database'], self::SECONDS_DELAY);
         $this->comment($message);
@@ -61,9 +53,6 @@ class DatabaseImportFromFileCommand extends DatabaseCommand
         return 0;
     }
 
-    /**
-     * @return array
-     */
     private function checkConnection(): array
     {
         $connectionName = config('database.default');
@@ -109,19 +98,19 @@ class DatabaseImportFromFileCommand extends DatabaseCommand
     }
 
     /**
-     * @throws FileNotFoundException
+     * @throws InvalidArgumentException|FileNotFoundException
      */
     private function getImportFile(?string $importFile = null): string
     {
         $importFile = empty($importFile) ? $this->getLatestSqlFile() : $importFile;
         if (empty($importFile)) {
-            throw new FileNotFoundException('Missing SQL file');
+            throw new InvalidArgumentException('Missing SQL file');
         }
         if (is_file($importFile) === false) {
             if (is_file(storage_path($importFile))) {
                 $importFile = storage_path($importFile);
             } else {
-                throw new FileNotFoundException('File not found: ' . $importFile);
+                throw new FileNotFoundException($importFile);
             }
         }
         return $importFile;
