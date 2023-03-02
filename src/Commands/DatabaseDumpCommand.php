@@ -59,7 +59,8 @@ class DatabaseDumpCommand extends DatabaseCommand
             ->skipLockTables()
             ->addExtraOption('--no-tablespaces');
 
-        if (! $config['is_maria']) {
+        if (isset($config['is_maria'])
+            && !$config['is_maria']) {
             $mysqlDumper->setGtidPurged('OFF');
         }
         $tempFileHandle = tmpfile();
