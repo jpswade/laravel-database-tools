@@ -43,7 +43,7 @@ class DatabaseCreateCommand extends DatabaseCommand
         $db->reconnect($connectionName);
         $builder = $db->getSchemaBuilder();
         $builder->createDatabase($schemaName);
-        $config->get(["database.connections.{$connectionName}.database" => $schemaName]);
+        $config->set(["database.connections.{$connectionName}.database" => $schemaName]);
         $this->info('Done');
         return self::SUCCESS;
     }
