@@ -4,7 +4,7 @@
         "Read more about it at https://getcomposer.org/doc/01-basic-usage.md#installing-dependencies",
         "This file is @generated automatically"
     ],
-    "content-hash": "8b5529de4a270cf56334854fd632706a",
+    "content-hash": "4c1fa93077b414a6eeb9d450c8d8303f",
     "packages": [
         {
             "name": "brick/math",
@@ -1936,66 +1936,6 @@
                 }
             ],
             "time": "2021-09-25T23:10:38+00:00"
-        },
-        {
-            "name": "spatie/db-dumper",
-            "version": "2.21.1",
-            "source": {
-                "type": "git",
-                "url": "https://github.com/spatie/db-dumper.git",
-                "reference": "05e5955fb882008a8947c5a45146d86cfafa10d1"
-            },
-            "dist": {
-                "type": "zip",
-                "url": "https://api.github.com/repos/spatie/db-dumper/zipball/05e5955fb882008a8947c5a45146d86cfafa10d1",
-                "reference": "05e5955fb882008a8947c5a45146d86cfafa10d1",
-                "shasum": ""
-            },
-            "require": {
-                "php": "^7.2|^8.0",
-                "symfony/process": "^4.2|^5.0"
-            },
-            "require-dev": {
-                "phpunit/phpunit": "^7.0|^8.0|^9.0"
-            },
-            "type": "library",
-            "autoload": {
-                "psr-4": {
-                    "Spatie\\DbDumper\\": "src"
-                }
-            },
-            "notification-url": "https://packagist.org/downloads/",
-            "license": [
-                "MIT"
-            ],
-            "authors": [
-                {
-                    "name": "Freek Van der Herten",
-                    "email": "freek@spatie.be",
-                    "homepage": "https://spatie.be",
-                    "role": "Developer"
-                }
-            ],
-            "description": "Dump databases",
-            "homepage": "https://github.com/spatie/db-dumper",
-            "keywords": [
-                "database",
-                "db-dumper",
-                "dump",
-                "mysqldump",
-                "spatie"
-            ],
-            "support": {
-                "issues": "https://github.com/spatie/db-dumper/issues",
-                "source": "https://github.com/spatie/db-dumper/tree/2.21.1"
-            },
-            "funding": [
-                {
-                    "url": "https://github.com/spatie",
-                    "type": "github"
-                }
-            ],
-            "time": "2021-02-24T14:56:42+00:00"
         },
         {
             "name": "swiftmailer/swiftmailer",
@@ -4682,22 +4622,22 @@
         },
         {
             "name": "guzzlehttp/psr7",
-            "version": "2.4.1",
+            "version": "2.6.2",
             "source": {
                 "type": "git",
                 "url": "https://github.com/guzzle/psr7.git",
-                "reference": "69568e4293f4fa993f3b0e51c9723e1e17c41379"
+                "reference": "45b30f99ac27b5ca93cb4831afe16285f57b8221"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/guzzle/psr7/zipball/69568e4293f4fa993f3b0e51c9723e1e17c41379",
-                "reference": "69568e4293f4fa993f3b0e51c9723e1e17c41379",
+                "url": "https://api.github.com/repos/guzzle/psr7/zipball/45b30f99ac27b5ca93cb4831afe16285f57b8221",
+                "reference": "45b30f99ac27b5ca93cb4831afe16285f57b8221",
                 "shasum": ""
             },
             "require": {
                 "php": "^7.2.5 || ^8.0",
                 "psr/http-factory": "^1.0",
-                "psr/http-message": "^1.0",
+                "psr/http-message": "^1.1 || ^2.0",
                 "ralouphie/getallheaders": "^3.0"
             },
             "provide": {
@@ -4705,9 +4645,9 @@
                 "psr/http-message-implementation": "1.0"
             },
             "require-dev": {
-                "bamarni/composer-bin-plugin": "^1.8.1",
+                "bamarni/composer-bin-plugin": "^1.8.2",
                 "http-interop/http-factory-tests": "^0.9",
-                "phpunit/phpunit": "^8.5.29 || ^9.5.23"
+                "phpunit/phpunit": "^8.5.36 || ^9.6.15"
             },
             "suggest": {
                 "laminas/laminas-httphandlerrunner": "Emit PSR-7 responses"
@@ -4717,9 +4657,6 @@
                 "bamarni-bin": {
                     "bin-links": true,
                     "forward-command": false
-                },
-                "branch-alias": {
-                    "dev-master": "2.4-dev"
                 }
             },
             "autoload": {
@@ -4781,7 +4718,7 @@
             ],
             "support": {
                 "issues": "https://github.com/guzzle/psr7/issues",
-                "source": "https://github.com/guzzle/psr7/tree/2.4.1"
+                "source": "https://github.com/guzzle/psr7/tree/2.6.2"
             },
             "funding": [
                 {
@@ -4797,7 +4734,7 @@
                     "type": "tidelift"
                 }
             ],
-            "time": "2022-08-28T14:45:39+00:00"
+            "time": "2023-12-03T20:05:35+00:00"
         },
         {
             "name": "hamcrest/hamcrest-php",
@@ -5774,21 +5711,21 @@
         },
         {
             "name": "psr/http-factory",
-            "version": "1.0.1",
+            "version": "1.0.2",
             "source": {
                 "type": "git",
                 "url": "https://github.com/php-fig/http-factory.git",
-                "reference": "12ac7fcd07e5b077433f5f2bee95b3a771bf61be"
+                "reference": "e616d01114759c4c489f93b099585439f795fe35"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/php-fig/http-factory/zipball/12ac7fcd07e5b077433f5f2bee95b3a771bf61be",
-                "reference": "12ac7fcd07e5b077433f5f2bee95b3a771bf61be",
+                "url": "https://api.github.com/repos/php-fig/http-factory/zipball/e616d01114759c4c489f93b099585439f795fe35",
+                "reference": "e616d01114759c4c489f93b099585439f795fe35",
                 "shasum": ""
             },
             "require": {
                 "php": ">=7.0.0",
-                "psr/http-message": "^1.0"
+                "psr/http-message": "^1.0 || ^2.0"
             },
             "type": "library",
             "extra": {
@@ -5808,7 +5745,7 @@
             "authors": [
                 {
                     "name": "PHP-FIG",
-                    "homepage": "http://www.php-fig.org/"
+                    "homepage": "https://www.php-fig.org/"
                 }
             ],
             "description": "Common interfaces for PSR-7 HTTP message factories",
@@ -5823,31 +5760,31 @@
                 "response"
             ],
             "support": {
-                "source": "https://github.com/php-fig/http-factory/tree/master"
+                "source": "https://github.com/php-fig/http-factory/tree/1.0.2"
             },
-            "time": "2019-04-30T12:38:16+00:00"
+            "time": "2023-04-10T20:10:41+00:00"
         },
         {
             "name": "psr/http-message",
-            "version": "1.0.1",
+            "version": "2.0",
             "source": {
                 "type": "git",
                 "url": "https://github.com/php-fig/http-message.git",
-                "reference": "f6561bf28d520154e4b0ec72be95418abe6d9363"
+                "reference": "402d35bcb92c70c026d1a6a9883f06b2ead23d71"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/php-fig/http-message/zipball/f6561bf28d520154e4b0ec72be95418abe6d9363",
-                "reference": "f6561bf28d520154e4b0ec72be95418abe6d9363",
+                "url": "https://api.github.com/repos/php-fig/http-message/zipball/402d35bcb92c70c026d1a6a9883f06b2ead23d71",
+                "reference": "402d35bcb92c70c026d1a6a9883f06b2ead23d71",
                 "shasum": ""
             },
             "require": {
-                "php": ">=5.3.0"
+                "php": "^7.2 || ^8.0"
             },
             "type": "library",
             "extra": {
                 "branch-alias": {
-                    "dev-master": "1.0.x-dev"
+                    "dev-master": "2.0.x-dev"
                 }
             },
             "autoload": {
@@ -5862,7 +5799,7 @@
             "authors": [
                 {
                     "name": "PHP-FIG",
-                    "homepage": "http://www.php-fig.org/"
+                    "homepage": "https://www.php-fig.org/"
                 }
             ],
             "description": "Common interface for HTTP messages",
@@ -5876,9 +5813,9 @@
                 "response"
             ],
             "support": {
-                "source": "https://github.com/php-fig/http-message/tree/master"
+                "source": "https://github.com/php-fig/http-message/tree/2.0"
             },
-            "time": "2016-08-06T14:39:51+00:00"
+            "time": "2023-04-04T09:54:51+00:00"
         },
         {
             "name": "ralouphie/getallheaders",
@@ -8078,8 +8015,9 @@
     "platform": {
         "php": "^7.4|8.0.*|8.1.*",
         "ext-fileinfo": "*",
+        "ext-pdo": "*",
         "ext-zip": "*"
     },
     "platform-dev": [],
-    "plugin-api-version": "2.2.0"
+    "plugin-api-version": "2.6.0"
 }
