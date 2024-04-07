@@ -39,7 +39,7 @@ class DatabaseCreateCommand extends DatabaseCommand
             throw new InvalidArgumentException('Missing Database Name');
         }
         $this->info(sprintf('Creating database "%s" via "%s" connection (if it does not exist)...', $schemaName, $connectionName));
-        $config->get(["database.connections.{$connectionName}.database" => null]);
+        $config->set(["database.connections.{$connectionName}.database" => null]);
         $db->reconnect($connectionName);
         $builder = $db->getSchemaBuilder();
         $builder->createDatabase($schemaName);
