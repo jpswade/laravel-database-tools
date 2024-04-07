@@ -31,11 +31,11 @@
         }
     },
     "require": {
-        "php": "^7.4|8.0.*|8.1.*",
+        "php": "^7.4|8.*",
         "illuminate/support": "*",
         "illuminate/console": "*",
         "illuminate/filesystem": "*",
-        "laravel/framework": "~5.1|6.*|7.*|8.*|9.*",
+        "laravel/framework": "~5.1|6.*|7.*|8.*|9.*|10.*",
         "ext-fileinfo": "*",
         "ext-pdo": "*",
         "ext-zip": "*"
