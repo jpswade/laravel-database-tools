@@ -1,6 +1,14 @@
 {
     "name": "jpswade/laravel-database-tools",
     "description": "Laravel Database Tools",
+    "keywords": [
+        "laravel",
+        "database",
+        "db",
+        "sqlite",
+        "tools",
+        "backup"
+    ],
     "type": "laravel-package",
     "license": "MIT",
     "authors": [
