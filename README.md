@@ -51,11 +51,27 @@ The commands are:
 
 ### SQLite MySQL Compatability Provider
 
-Follow the usual [Registering Providers](https://laravel.com/docs/9.x/providers#registering-providers) instructions:
+For `testing` you can add the provider to your Test:
+
+```php
+    protected function registerServiceProviders(): void
+    {
+        $this->app->register(SqliteMysqlCompatibilityProvider::class);
+    }
+
+    protected function setUp(): void
+    {
+        parent::setUp();
+
+        $this->registerServiceProviders();
+    }
+```
+
+In production, follow the usual [Registering Providers](https://laravel.com/docs/9.x/providers#registering-providers) instructions:
 
 In `config/app.php`, find the `providers` array and add:
 
-```shell
+```php
 'providers' => [
     // Other Service Providers
  
