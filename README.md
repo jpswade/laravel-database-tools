@@ -93,3 +93,11 @@ These are limitations you'll come across if you use certain commands:
 ### Class 'League\Flysystem\AwsS3v3\AwsS3Adapter' not found
 
 ```% composer require league/flysystem-aws-s3-v3:~1.0```
+
+Note: Needed for `db:getFromBackup` command to use the S3 Driver.
+
+### Class 'Spatie\DbDumper\Databases\MySql' not found
+
+```% composer require spatie/db-dumper```
+
+Note: Needed by the `db:dump` command.
