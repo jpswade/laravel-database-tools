@@ -11,6 +11,7 @@ With this package you can:
 - Update the charset and collation
 - Fixes the "no such function" error by giving SQLite MySQL compatibility by creating the missing function using PDO for
   SQLite using PHP functions.
+- Uses MySQL commands to optimize database tables (using OPTIMIZE TABLE)
 
 ## Install
 
@@ -48,6 +49,7 @@ The commands are:
 * `db:getFromBackup` - Download database backup file from backup.
 * `db:importFromFile {file?}` - Import data from a sql file into a database.
 * `db:charset` - Changes the charset and collation to whatever the database is set to use.
+* `db:optimize` - Optimizes your database tables.
 
 ### SQLite MySQL Compatability Provider
 
@@ -87,6 +89,8 @@ These are limitations you'll come across if you use certain commands:
   the [Amazon S3 Driver](https://laravel.com/docs/5.1/filesystem#configuration) as per the Laravel docs.
 * The `db:dump` command depends on `spatie/db-dumper`.
 * The commands have only been tested to work with MySQL at the moment, but could be extended to others.
+* The `db:importFromFile` command can only import `.sql` files.
+* The `db:optimize` command only works with MySQL (at the moment).
 
 ## Troubleshooting
 
