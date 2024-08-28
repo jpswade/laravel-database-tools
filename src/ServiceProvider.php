@@ -8,7 +8,6 @@ use Jpswade\LaravelDatabaseTools\Commands\DatabaseCreateCommand;
 use Jpswade\LaravelDatabaseTools\Commands\DatabaseDumpCommand;
 use Jpswade\LaravelDatabaseTools\Commands\DatabaseGetFromBackupCommand;
 use Jpswade\LaravelDatabaseTools\Commands\DatabaseImportFromFileCommand;
-use Jpswade\LaravelDatabaseTools\Commands\DatabaseOptimizeCommand;
 
 class ServiceProvider extends BaseProvider
 {
@@ -20,7 +19,6 @@ class ServiceProvider extends BaseProvider
         DatabaseDumpCommand::class,
         DatabaseGetFromBackupCommand::class,
         DatabaseImportFromFileCommand::class,
-        DatabaseOptimizeCommand::class,
     ];
 
     /** @var string */
