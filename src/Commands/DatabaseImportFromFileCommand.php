@@ -9,6 +9,7 @@ use Jpswade\LaravelDatabaseTools\ServiceProvider;
 use League\Flysystem\FileNotFoundException;
 use Illuminate\Support\Facades\Schema;
 use RuntimeException;
+use Symfony\Component\Console\Helper\ProgressBar;
 use Symfony\Component\Process\Process;
 
 class DatabaseImportFromFileCommand extends DatabaseCommand
@@ -124,20 +125,12 @@ class DatabaseImportFromFileCommand extends DatabaseCommand
         return array_shift($files);
     }
 
-    private static function wait(int $seconds = self::SECONDS_DELAY): void
-    {
-        for ($i = 1; $i <= $seconds; $i++) {
-            printf('.');
-            sleep(1);
-        }
-    }
-
     private function databaseImport(string $importFile): void
     {
         DB::disableQueryLog();
         $max = File::size($importFile);
         $bar = $this->output->createProgressBar($max);
-        $bar->setFormat('verbose');
+        $bar->setFormat(ProgressBar::FORMAT_VERBOSE);
         $bar->start();
         $handle = fopen($importFile, 'rb');
         $length = memory_get_peak_usage(true);
@@ -156,7 +149,7 @@ class DatabaseImportFromFileCommand extends DatabaseCommand
         DB::disableQueryLog();
         $tempFileHandle = tmpfile();
         $bar = $this->output->createProgressBar();
-        $bar->setFormat('verbose');
+        $bar->setFormat(ProgressBar::FORMAT_VERBOSE);
         $process = $this->importFromFile($importFile, $tempFileHandle, $connection);
         $process->start();
         while ($process->isRunning()) {

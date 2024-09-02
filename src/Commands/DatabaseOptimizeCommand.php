@@ -2,10 +2,10 @@
 
 namespace Jpswade\LaravelDatabaseTools\Commands;
 
-use Illuminate\Console\Command as BaseCommand;
 use Illuminate\Database\DatabaseManager;
+use Symfony\Component\Console\Helper\ProgressBar;
 
-class DatabaseOptimizeCommand extends BaseCommand
+class DatabaseOptimizeCommand extends DatabaseCommand
 {
     protected $signature = 'db:optimize {--database=default} {--table=*}';
     protected $description = 'Optimizes database tables';
@@ -20,8 +20,18 @@ class DatabaseOptimizeCommand extends BaseCommand
             $tables = array_column($tables, 'TABLE_NAME');
         }
 
-        $this->info('Starting...');
+        if (empty($tables)) {
+            $this->error('No tables found');
+            return self::FAILURE;
+        }
+
+        $env = strtoupper(app()->environment());
+        $message = sprintf('[%s] Starting Optimizing database tables: %s in %d seconds', $env, $database, implode(', ', $tables), DatabaseCommand::SECONDS_DELAY);
+        $this->comment($message);
+        self::wait();
+
         $bar = $this->output->createProgressBar(count($tables));
+        $bar->setFormat(ProgressBar::FORMAT_VERBOSE);
 
         foreach ($tables as $table) {
             $result = $db->select("OPTIMIZE TABLE `{$table}`");
@@ -30,7 +40,7 @@ class DatabaseOptimizeCommand extends BaseCommand
             }
         }
         $bar->finish();
-        $this->info('Done');
+        $this->info(PHP_EOL . 'Done');
 
         return self::SUCCESS;
     }

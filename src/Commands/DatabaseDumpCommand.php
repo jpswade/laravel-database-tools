@@ -6,6 +6,7 @@ use Illuminate\Support\Facades\File;
 use Jpswade\LaravelDatabaseTools\ServiceProvider;
 use Spatie\DbDumper\Databases\MySql;
 use Spatie\DbDumper\Exceptions\DumpFailed;
+use Symfony\Component\Console\Helper\ProgressBar;
 use Symfony\Component\Process\Process;
 
 class DatabaseDumpCommand extends DatabaseCommand
@@ -68,7 +69,7 @@ class DatabaseDumpCommand extends DatabaseCommand
         $process = $this->dumpToFile($mysqlDumper, $outputFile, $tempFileHandle);
         $process->start();
         $bar = $this->output->createProgressBar();
-        $bar->setFormat('verbose');
+        $bar->setFormat(ProgressBar::FORMAT_VERBOSE);
         while ($process->isRunning()) {
             sleep(1);
             clearstatcache(true, $outputFile);
@@ -101,7 +102,7 @@ class DatabaseDumpCommand extends DatabaseCommand
         return Process::fromShellCommandline($command, null, null, null, self::TIMEOUT);
     }
 
-    private function checkFilePathExists(string $directory)
+    private function checkFilePathExists(string $directory): void
     {
         if (!is_dir($directory)) {
             mkdir($directory, 0755, true);
