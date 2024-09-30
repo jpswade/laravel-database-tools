@@ -39,11 +39,11 @@
         }
     },
     "require": {
-        "php": "^7.4|8.*",
+        "php": "^8.1|^8.2|^8.3",
         "illuminate/support": "*",
         "illuminate/console": "*",
         "illuminate/filesystem": "*",
-        "laravel/framework": "~5.1|6.*|7.*|8.*|9.*|10.*",
+        "laravel/framework": "8.*|9.*|10.*|11.*",
         "ext-fileinfo": "*",
         "ext-pdo": "*",
         "ext-zip": "*"
