@@ -59,6 +59,9 @@ class DatabaseGetFromBackupCommand extends DatabaseCommand
         if (empty($config['driver'])) {
             throw new InvalidArgumentException('Does not have a configured driver.');
         }
+        if (empty($config['bucket'])) {
+            throw new InvalidArgumentException('Does not have a configured bucket.');
+        }
         $name = $config['driver'];
         $driverMethod = 'create' . ucfirst($name) . 'Driver';
         if (method_exists(FilesystemManager::class, $driverMethod) === false) {
