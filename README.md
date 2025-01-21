@@ -100,6 +100,10 @@ These are limitations you'll come across if you use certain commands:
 
 Note: Needed for `db:getFromBackup` command to use the S3 Driver.
 
+### Class "League\Flysystem\AwsS3V3\PortableVisibilityConverter" not found
+
+```% composer require league/flysystem-aws-s3-v3```
+
 ### Class 'Spatie\DbDumper\Databases\MySql' not found
 
 ```% composer require spatie/db-dumper```
