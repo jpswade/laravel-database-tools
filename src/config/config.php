@@ -20,10 +20,10 @@ return [
 
     'filesystem' => [
         'driver' => 's3',
-        'key' => env('AWS_ACCESS_KEY_ID'),
-        'secret' => env('AWS_SECRET_ACCESS_KEY'),
-        'region' => env('AWS_DEFAULT_REGION', 'eu-west-1'),
-        'bucket' => env('DB_AWS_BUCKET'),
+        'key' => env('DB_AWS_ACCESS_KEY_ID', env('AWS_ACCESS_KEY_ID')),
+        'secret' => env('DB_AWS_SECRET_ACCESS_KEY', env('AWS_SECRET_ACCESS_KEY')),
+        'region' => env('DB_AWS_DEFAULT_REGION', env('AWS_DEFAULT_REGION', 'eu-west-1')),
+        'bucket' => env('DB_AWS_BUCKET', env('AWS_BUCKET')),
         'path' => env('DB_AWS_BUCKET_PATH'),
     ],
 
