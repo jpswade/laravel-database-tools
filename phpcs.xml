@@ -1,0 +1,127 @@
+<?xml version="1.0"?>
+<!-- @see https://pear.php.net/manual/en/package.php.php-codesniffer.annotated-ruleset.php -->
+<ruleset name="Laravel PHPCS Rules">
+
+    <description>PHPCS ruleset for Laravel app.</description>
+
+    <file>src</file>
+    <file>tests</file>
+
+    <!-- Show progress of the run -->
+    <arg value="p"/>
+
+    <!-- Show sniff codes in all reports -->
+    <arg value="s"/>
+
+    <!-- Only fail on errors, not warnings -->
+    <arg name="error-severity" value="1"/>
+    <arg name="warning-severity" value="0"/>
+
+    <!-- Our base rule: set to PSR12 -->
+    <rule ref="PSR12">
+        <!-- Allow more flexible line length for Laravel -->
+        <exclude name="PSR12.Files.FileHeader.SpacingAfterBlock"/>
+        <exclude name="PSR12.Properties.ConstantVisibility.NotFound"/>
+
+        <!-- Allow more flexible operator spacing -->
+        <exclude name="PSR12.Operators.OperatorSpacing.NoSpaceBefore"/>
+        <exclude name="PSR12.Operators.OperatorSpacing.NoSpaceAfter"/>
+
+        <!-- Allow more flexible control structure spacing -->
+        <exclude name="PSR12.ControlStructures.ControlStructureSpacing.FirstExpressionLine"/>
+        <exclude name="PSR12.ControlStructures.ControlStructureSpacing.CloseParenthesisLine"/>
+
+        <!-- Allow more flexible function call spacing -->
+        <exclude name="PSR12.Methods.FunctionCallSignature.MultipleArguments"/>
+        <exclude name="PSR12.Methods.FunctionCallSignature.ContentAfterOpenBracket"/>
+        <exclude name="PSR12.Methods.FunctionCallSignature.CloseBracketLine"/>
+        <exclude name="PSR12.Methods.FunctionCallSignature.Indent"/>
+
+        <!-- Allow more flexible class declaration -->
+        <exclude name="PSR12.Classes.OpeningBraceSpace.Found"/>
+        <exclude name="PSR2.Classes.ClassDeclaration.OpenBraceNewLine"/>
+        <exclude name="PSR2.Classes.ClassDeclaration.CloseBraceAfterBody"/>
+
+        <!-- Allow more flexible file ending -->
+        <exclude name="PSR2.Files.EndFileNewline.TooMany"/>
+
+        <!-- Allow more flexible trait usage -->
+        <exclude name="PSR12.Traits.UseDeclaration.NoBlankLineAfterUse"/>
+
+        <!-- Allow more flexible class instantiation -->
+        <exclude name="PSR12.Classes.ClassInstantiation.MissingParentheses"/>
+
+        <!-- Allow more flexible function spacing -->
+        <exclude name="Squiz.Functions.MultiLineFunctionDeclaration.SpaceAfterFunction"/>
+
+        <!-- Allow more flexible control structure spacing -->
+        <exclude name="Squiz.WhiteSpace.ControlStructureSpacing.SpacingBeforeClose"/>
+
+        <!-- Allow more flexible function call spacing -->
+        <exclude name="PSR2.Methods.FunctionCallSignature.SpaceBeforeOpenBracket"/>
+
+        <!-- Prevent @var comments from being forced to multi-line format -->
+        <exclude name="Squiz.Commenting.VariableComment"/>
+        <exclude name="Generic.Commenting.DocComment"/>
+        <exclude name="Squiz.Commenting.DocCommentAlignment"/>
+    </rule>
+
+    <!-- More lenient line length rules for Laravel -->
+    <rule ref="Generic.Files.LineLength">
+        <properties>
+            <property name="lineLimit" value="120"/>
+            <property name="absoluteLineLimit" value="150"/>
+            <!-- Ignore line length for URLs, regex patterns, and long strings -->
+            <property name="ignoreComments" value="false"/>
+        </properties>
+        <!-- Allow longer lines in test files -->
+        <exclude-pattern>tests/</exclude-pattern>
+    </rule>
+
+
+    <!-- Allow test method names to not be camelCase -->
+    <rule ref="PSR1.Methods.CamelCapsMethodName.NotCamelCaps">
+        <exclude-pattern>tests/</exclude-pattern>
+    </rule>
+
+    <!-- Exclude common Laravel patterns that might cause issues -->
+    <exclude-pattern>*/migrations/*</exclude-pattern>
+    <exclude-pattern>*/seeders/*</exclude-pattern>
+    <exclude-pattern>*/factories/*</exclude-pattern>
+
+    <!-- Ignore whitespace issues that are common in Laravel -->
+    <rule ref="Squiz.WhiteSpace.SuperfluousWhitespace.EndLine">
+        <severity>0</severity>
+    </rule>
+
+    <!-- Ignore inline control structures in Laravel -->
+    <rule ref="Generic.ControlStructures.InlineControlStructure.NotAllowed">
+        <severity>0</severity>
+    </rule>
+
+    <!-- Ignore specific existing issues that are common in Laravel -->
+    <rule ref="Generic.Files.LineLength.MaxExceeded">
+        <severity>0</severity>
+    </rule>
+
+    <!-- Ignore missing return types in existing code -->
+    <rule ref="PSR1.Methods.CamelCapsMethodName.NotCamelCaps">
+        <severity>0</severity>
+    </rule>
+
+    <!-- Additional rules to preserve single-line @var comments -->
+    <rule ref="Squiz.Commenting.VariableComment">
+        <severity>0</severity>
+    </rule>
+
+    <!-- Allow single-line @var comments without forcing multi-line format -->
+    <rule ref="Generic.Commenting.DocComment">
+        <severity>0</severity>
+    </rule>
+
+    <rule ref="Squiz.Commenting.DocCommentAlignment">
+        <severity>0</severity>
+    </rule>
+
+
+</ruleset>

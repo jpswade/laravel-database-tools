@@ -19,7 +19,8 @@
     ],
     "require-dev": {
         "roave/security-advisories": "dev-latest",
-        "orchestra/testbench": "^6.25"
+        "orchestra/testbench": "^6.25",
+        "squizlabs/php_codesniffer": "^4.0"
     },
     "autoload": {
         "psr-4": {
@@ -51,5 +52,20 @@
     "suggest": {
         "league/flysystem-aws-s3-v3": "Needed for db:getFromBackup command to use the S3 Driver.",
         "spatie/db-dumper": "Needed by the db:dump command."
+    },
+    "scripts": {
+        "phpcs": [
+            "./vendor/bin/phpcs --standard=phpcs.xml"
+        ],
+        "phpcbf": [
+            "./vendor/bin/phpcbf --standard=phpcs.xml"
+        ],
+        "phpcs-baseline": [
+            "./vendor/bin/phpcs --standard=phpcs.xml --report=json > phpcs-baseline.json"
+        ],
+        "test": [
+            "@phpcs",
+            "@phpunit"
+        ]
     }
 }

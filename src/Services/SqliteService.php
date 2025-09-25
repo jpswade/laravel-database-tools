@@ -42,7 +42,7 @@ class SqliteService
         'localtime' => 'now',
         'localtimestamp' => 'now',
         'isnull' => 'isnull',
-        'if' => '_if',
+        'if' => 'php_if',
         'regexpp' => 'regexp',
         'concat' => 'concat',
         'field' => 'field',
@@ -389,7 +389,7 @@ class SqliteService
      * @param mixed $false statement or value returned if $expression is false.
      * @return mixed
      */
-    public function _if($expression, $true, $false)
+    public function php_if($expression, $true, $false)
     {
         return ($expression == true) ? $true : $false;
     }
