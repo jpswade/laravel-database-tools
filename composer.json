@@ -17,10 +17,20 @@
             "email": "jpswade@gmail.com"
         }
     ],
+    "require": {
+        "php": "^7.4|^8.0|^8.1|^8.2|^8.3",
+        "illuminate/support": "*",
+        "illuminate/console": "*",
+        "illuminate/filesystem": "*",
+        "laravel/framework": "8.*|9.*|10.*|11.*",
+        "ext-fileinfo": "*",
+        "ext-pdo": "*",
+        "ext-zip": "*"
+    },
     "require-dev": {
-        "roave/security-advisories": "dev-latest",
-        "orchestra/testbench": "^6.25",
-        "squizlabs/php_codesniffer": "^4.0"
+        "orchestra/testbench": "*",
+        "squizlabs/php_codesniffer": "*",
+        "spatie/db-dumper": "*"
     },
     "autoload": {
         "psr-4": {
@@ -38,16 +48,6 @@
                 "Jpswade\\LaravelDatabaseTools\\ServiceProvider"
             ]
         }
-    },
-    "require": {
-        "php": "^7.4|^8.0|^8.1|^8.2|^8.3",
-        "illuminate/support": "*",
-        "illuminate/console": "*",
-        "illuminate/filesystem": "*",
-        "laravel/framework": "8.*|9.*|10.*|11.*",
-        "ext-fileinfo": "*",
-        "ext-pdo": "*",
-        "ext-zip": "*"
     },
     "suggest": {
         "league/flysystem-aws-s3-v3": "Needed for db:getFromBackup command to use the S3 Driver.",
