@@ -81,10 +81,10 @@ class DatabaseDumpCommand extends DatabaseCommand
             throw DumpFailed::processDidNotEndSuccessfully($process);
         }
         if (!file_exists($outputFile)) {
-            throw DumpFailed::dumpfileWasNotCreated();
+            throw DumpFailed::dumpfileWasNotCreated($process);
         }
         if (filesize($outputFile) === 0) {
-            throw DumpFailed::dumpfileWasEmpty();
+            throw DumpFailed::dumpfileWasEmpty($process);
         }
         $message = 'Created MySql Dump outputFile: ' . $outputFile;
         $this->info($message);
