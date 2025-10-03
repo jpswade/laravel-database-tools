@@ -33,7 +33,11 @@ class DatabaseCreateCommand extends DatabaseCommand
     {
         $this->info('Creating database if it does not exist...');
         $connectionName = $config->get('database.default');
-        $connection = $config->get('database.connections')[$connectionName];
+        $connections = $config->get('database.connections');
+        if (!isset($connections[$connectionName])) {
+            throw new InvalidArgumentException('Invalid database connection: ' . $connectionName);
+        }
+        $connection = $connections[$connectionName];
         $schemaName = $connection['database'];
         if (empty($schemaName)) {
             throw new InvalidArgumentException('Missing Database Name');
