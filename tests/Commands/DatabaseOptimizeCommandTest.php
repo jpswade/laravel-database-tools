@@ -23,53 +23,52 @@ class DatabaseOptimizeCommandTest extends TestCase
         parent::tearDown();
     }
 
-    public function it_optimizes_all_tables_when_no_table_option_is_provided()
+    public function testShowsUnsupportedMessageWhenUsingSQLite()
     {
         Artisan::call('db:optimize');
-
         $output = Artisan::output();
-
-        $this->assertStringContainsString('Starting Optimization.', $output);
-        $this->assertStringContainsString('Optimization Completed', $output);
+        $this->assertStringContainsString('Optimization is only supported for MySQL databases.', $output);
     }
 
-    public function it_optimizes_specific_tables_when_table_option_is_provided()
+    public function testShowsUnsupportedMessageWhenUsingSpecificTable()
     {
-        Artisan::call('db:optimize', ['--table' => 'test_table']);
-
+        Artisan::call('db:optimize', ['--table' => ['test_table']]);
         $output = Artisan::output();
-
-        $this->assertStringContainsString('Starting Optimization.', $output);
-        $this->assertStringContainsString('Optimization Completed', $output);
+        $this->assertStringContainsString('Optimization is only supported for MySQL databases.', $output);
     }
 
-    public function it_does_not_optimize_tables_when_non_existent_table_option_is_provided()
+    public function testShowsUnsupportedMessageWhenUsingNonExistentTable()
     {
-        Artisan::call('db:optimize', ['--table' => 'non_existent_table']);
-
+        Artisan::call('db:optimize', ['--table' => ['non_existent_table']]);
         $output = Artisan::output();
-
-        $this->assertStringContainsString('Starting Optimization.', $output);
-        $this->assertStringNotContainsString('Optimization Completed', $output);
+        $this->assertStringContainsString('Optimization is only supported for MySQL databases.', $output);
     }
 
-    public function it_optimizes_tables_in_specific_database_when_database_option_is_provided()
+    public function testShowsUnsupportedMessageWhenUsingSpecificDatabase()
     {
-        Artisan::call('db:optimize', ['--database' => 'test_database']);
-
+        Artisan::call('db:optimize', ['--database' => 'testing']);
         $output = Artisan::output();
-
-        $this->assertStringContainsString('Starting Optimization.', $output);
-        $this->assertStringContainsString('Optimization Completed', $output);
+        $this->assertStringContainsString('Optimization is only supported for MySQL databases.', $output);
     }
 
-    public function it_does_not_optimize_tables_when_non_existent_database_option_is_provided()
+    public function testShowsUnsupportedMessageWhenUsingNonExistentDatabase()
     {
         Artisan::call('db:optimize', ['--database' => 'non_existent_database']);
-
         $output = Artisan::output();
+        $this->assertStringContainsString('Optimization is only supported for MySQL databases.', $output);
+    }
 
-        $this->assertStringContainsString('Starting Optimization.', $output);
-        $this->assertStringNotContainsString('Optimization Completed', $output);
+    public function testOptimizesTablesWithMySQLDriver()
+    {
+        // Only run this test if MySQL is available
+        if (getenv('DB_CONNECTION') === 'mysql') {
+            \Illuminate\Support\Facades\Config::set('database.connections.testing.driver', 'mysql');
+            Artisan::call('db:optimize');
+            $output = Artisan::output();
+            $this->assertStringContainsString('Starting Optimizing database tables', $output);
+            $this->assertStringContainsString('Optimization Completed', $output);
+        } else {
+            $this->markTestSkipped('MySQL connection not available for testing.');
+        }
     }
 }
