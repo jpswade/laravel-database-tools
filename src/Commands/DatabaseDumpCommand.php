@@ -35,10 +35,15 @@ class DatabaseDumpCommand extends DatabaseCommand
     {
         $config = config(ServiceProvider::CONFIG_KEY . '.database');
         $fields = ['host', 'port', 'database', 'username'];
+        $missingFields = [];
         foreach ($fields as $field) {
             if (empty($config[$field])) {
-                $this->error('Missing ' . $field);
+                $missingFields[] = $field;
             }
+        }
+        if (count($missingFields) > 0) {
+            $this->error('Missing configuration fields: ' . implode(', ', $missingFields));
+            return self::FAILURE;
         }
         $host = $config['host'];
         $port = $config['port'];
