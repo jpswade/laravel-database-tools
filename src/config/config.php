@@ -15,7 +15,6 @@ return [
         'prefix_indexes' => true,
         'strict' => false,
         'engine' => null,
-        'is_maria' => env('DB_IS_MARIA_SOURCE', false),
     ],
 
     'filesystem' => [

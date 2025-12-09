@@ -65,17 +65,6 @@ class DatabaseDumpCommand extends DatabaseCommand
             ->skipLockTables()
             ->addExtraOption('--no-tablespaces');
 
-        $isMariaDb = false;
-        if ($config['driver'] === 'mariadb') {
-            $isMariaDb = true;
-        }
-        if (isset($config['is_maria'])
-            && !$config['is_maria']) {
-            $isMariaDb = true;
-        }
-        if ($isMariaDb) {
-            $mysqlDumper->setGtidPurged('OFF');
-        }
         $tempFileHandle = tmpfile();
         $this->checkFilePathExists(dirname($outputFile));
         $process = $this->dumpToFile($mysqlDumper, $outputFile, $tempFileHandle);
