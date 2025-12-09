@@ -2,12 +2,12 @@
 
 return [
     'database' => [
-        'driver' => 'mysql',
-        'host' => env('DB_HOST_SOURCE', ''),
-        'port' => env('DB_PORT_SOURCE', '3306'),
-        'database' => env('DB_DATABASE_SOURCE', ''),
-        'username' => env('DB_USERNAME_SOURCE', ''),
-        'password' => env('DB_PASSWORD_SOURCE', ''),
+        'driver' => env('DB_CONNECTION_SOURCE', env('DB_CONNECTION', 'mysql')),
+        'host' => env('DB_HOST_SOURCE', env('DB_HOST', '127.0.0.1')),
+        'port' => env('DB_PORT_SOURCE', env('DB_PORT', '3306')),
+        'database' => env('DB_DATABASE_SOURCE', env('DB_DATABASE', 'laravel')),
+        'username' => env('DB_USERNAME_SOURCE', env('DB_USERNAME', 'root')),
+        'password' => env('DB_PASSWORD_SOURCE', env('DB_PASSWORD')),
         'unix_socket' => env('DB_SOCKET', ''),
         'charset' => 'utf8mb4',
         'collation' => 'utf8mb4_unicode_ci',
@@ -15,7 +15,7 @@ return [
         'prefix_indexes' => true,
         'strict' => false,
         'engine' => null,
-        'is_maria' => null,
+        'is_maria' => env('DB_IS_MARIA_SOURCE', false),
     ],
 
     'filesystem' => [

@@ -34,7 +34,7 @@ class DatabaseDumpCommand extends DatabaseCommand
     public function handle(): int
     {
         $config = config(ServiceProvider::CONFIG_KEY . '.database');
-        $fields = ['host', 'port', 'database', 'username', 'password'];
+        $fields = ['host', 'port', 'database', 'username'];
         foreach ($fields as $field) {
             if (empty($config[$field])) {
                 $this->error('Missing ' . $field);
@@ -60,8 +60,15 @@ class DatabaseDumpCommand extends DatabaseCommand
             ->skipLockTables()
             ->addExtraOption('--no-tablespaces');
 
+        $isMariaDb = false;
+        if ($config['driver'] === 'mariadb') {
+            $isMariaDb = true;
+        }
         if (isset($config['is_maria'])
             && !$config['is_maria']) {
+            $isMariaDb = true;
+        }
+        if ($isMariaDb) {
             $mysqlDumper->setGtidPurged('OFF');
         }
         $tempFileHandle = tmpfile();
