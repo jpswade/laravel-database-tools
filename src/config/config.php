@@ -26,7 +26,10 @@ return [
         'path' => env('DB_AWS_BUCKET_PATH'),
     ],
 
-    'import' => ['method' => 'command'],
+    'import' => [
+        'method' => 'command',
+        'increase_max_allowed_packet' => env('DBTOOLS_INCREASE_MAX_ALLOWED_PACKET', true),
+    ],
 
     'get' => ['method' => 'command'],
 ];

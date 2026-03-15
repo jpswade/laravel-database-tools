@@ -66,6 +66,10 @@ class DatabaseImportFromFileCommand extends DatabaseCommand
 
     private function checkMaxAllowedPacket(): void
     {
+        if (!config(ServiceProvider::CONFIG_KEY . '.import.increase_max_allowed_packet', true)) {
+            return;
+        }
+
         $query = "SHOW VARIABLES LIKE 'max_allowed_packet'";
         $result = DB::select($query);
         $value = (int)$result[0]->Value;
