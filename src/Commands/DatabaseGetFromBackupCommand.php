@@ -7,6 +7,7 @@ use Illuminate\Filesystem\FilesystemManager;
 use Illuminate\Support\Facades\Config;
 use InvalidArgumentException;
 use Jpswade\LaravelDatabaseTools\ServiceProvider;
+use League\Flysystem\FileAttributes;
 use RuntimeException;
 
 class DatabaseGetFromBackupCommand extends DatabaseCommand
@@ -74,11 +75,13 @@ class DatabaseGetFromBackupCommand extends DatabaseCommand
     private function getLatestFile(): string
     {
         $backupPath = $this->backupPath;
-        $list = $this->storage->listContents($backupPath);
+        $list = iterator_to_array($this->storage->listContents($backupPath), false);
         if (empty($list)) {
             throw new RuntimeException('No files available at '. $backupPath);
         }
-        $files = collect($list);
+        $files = collect($list)
+            ->map(fn ($file) => $this->normaliseListItem($file))
+            ->filter();
         $files = $files->sortBy('timestamp')->reject(function (array $file) {
             return in_array(strtolower($file['extension']), [self::ZIP_EXTENSION, self::SQL_EXTENSION], true) === false;
         });
@@ -87,6 +90,38 @@ class DatabaseGetFromBackupCommand extends DatabaseCommand
             throw new RuntimeException('Unable to get latest file');
         }
         return $file['basename'];
+    }
+
+    /**
+     * @param array|FileAttributes $file
+     */
+    private function normaliseListItem($file): ?array
+    {
+        if ($file instanceof FileAttributes) {
+            $path = $file->path();
+            $basename = basename($path);
+            $extension = pathinfo($basename, PATHINFO_EXTENSION);
+
+            return [
+                'basename' => $basename,
+                'extension' => $extension,
+                'timestamp' => (int) ($file->lastModified() ?? 0),
+            ];
+        }
+
+        if (is_array($file)) {
+            $basename = $file['basename'] ?? basename((string) ($file['path'] ?? ''));
+            $extension = $file['extension'] ?? pathinfo($basename, PATHINFO_EXTENSION);
+            $timestamp = (int) ($file['timestamp'] ?? 0);
+
+            return [
+                'basename' => $basename,
+                'extension' => $extension,
+                'timestamp' => $timestamp,
+            ];
+        }
+
+        return null;
     }
 
     /**
