@@ -152,15 +152,29 @@ class DatabaseImportFromFileCommand extends DatabaseCommand
     {
         DB::disableQueryLog();
         $tempFileHandle = tmpfile();
-        $bar = $this->output->createProgressBar();
+        $fileHandle = fopen($importFile, 'rb');
+        if ($fileHandle === false) {
+            throw new RuntimeException("Unable to open import file: {$importFile}");
+        }
+        $max = File::size($importFile);
+        $bar = $this->output->createProgressBar($max);
         $bar->setFormat(ProgressBar::FORMAT_VERBOSE);
-        $process = $this->importFromFile($importFile, $tempFileHandle, $connection);
+        $process = $this->importFromFile($fileHandle, $tempFileHandle, $connection);
         $process->start();
+        $bar->start();
         while ($process->isRunning()) {
             sleep(1);
-            $bar->advance();
+            $position = ftell($fileHandle);
+            if ($position !== false) {
+                $bar->setProgress($position);
+            }
+        }
+        $position = ftell($fileHandle);
+        if ($position !== false) {
+            $bar->setProgress($position);
         }
         $bar->finish();
+        fclose($fileHandle);
         if (!$process->isSuccessful()) {
             throw new RuntimeException("The import process failed with exitcode {$process->getExitCode()} : {$process->getExitCodeText()} : {$process->getErrorOutput()}");
         }
@@ -169,12 +183,12 @@ class DatabaseImportFromFileCommand extends DatabaseCommand
     /**
      * Import the contents of the database to the database.
      *
-     * @param string $importFile
+     * @param resource $importFileHandle
      * @param resource $tempFileHandle
      * @param array $connection
      * @return Process
      */
-    protected function importFromFile(string $importFile, $tempFileHandle, array $connection): Process
+    protected function importFromFile($importFileHandle, $tempFileHandle, array $connection): Process
     {
         $contents = [
             '[client]',
@@ -193,9 +207,10 @@ class DatabaseImportFromFileCommand extends DatabaseCommand
             "--defaults-extra-file=\"{$temporaryCredentialsFile}\"",
         ];
         $command[] = $connection['database'];
-        $query = sprintf('SET autocommit=0; source %s; COMMIT;', $importFile);
-        $command[] = sprintf('-e "%s"', $query);
+        $command[] = '--binary-mode';
         $command = implode(' ', $command);
-        return Process::fromShellCommandline($command);
+        $process = Process::fromShellCommandline($command);
+        $process->setInput($importFileHandle);
+        return $process;
     }
 }
