@@ -1,0 +1,361 @@
+parameters:
+	ignoreErrors:
+		-
+			message: '#^Method Jpswade\\LaravelDatabaseTools\\Commands\\DatabaseCommand\:\:getSqlFiles\(\) has no return type specified\.$#'
+			identifier: missingType.return
+			count: 1
+			path: src/Commands/DatabaseCommand.php
+
+		-
+			message: '#^Construct empty\(\) is not allowed\. Use more strict comparison\.$#'
+			identifier: empty.notAllowed
+			count: 1
+			path: src/Commands/DatabaseCreateCommand.php
+
+		-
+			message: '#^Dynamic call to static method Illuminate\\Database\\Connection\:\:getSchemaBuilder\(\)\.$#'
+			identifier: staticMethod.dynamicCall
+			count: 1
+			path: src/Commands/DatabaseCreateCommand.php
+
+		-
+			message: '#^Construct empty\(\) is not allowed\. Use more strict comparison\.$#'
+			identifier: empty.notAllowed
+			count: 1
+			path: src/Commands/DatabaseDumpCommand.php
+
+		-
+			message: '#^Method Jpswade\\LaravelDatabaseTools\\Commands\\DatabaseDumpCommand\:\:dumpToFile\(\) has parameter \$tempFileHandle with no type specified\.$#'
+			identifier: missingType.parameter
+			count: 1
+			path: src/Commands/DatabaseDumpCommand.php
+
+		-
+			message: '#^Casting to int something that''s already int\.$#'
+			identifier: cast.useless
+			count: 1
+			path: src/Commands/DatabaseGetFromBackupCommand.php
+
+		-
+			message: '#^Construct empty\(\) is not allowed\. Use more strict comparison\.$#'
+			identifier: empty.notAllowed
+			count: 6
+			path: src/Commands/DatabaseGetFromBackupCommand.php
+
+		-
+			message: '#^Dynamic call to static method League\\Flysystem\\FilesystemReader\:\:listContents\(\)\.$#'
+			identifier: staticMethod.dynamicCall
+			count: 1
+			path: src/Commands/DatabaseGetFromBackupCommand.php
+
+		-
+			message: '#^Method Jpswade\\LaravelDatabaseTools\\Commands\\DatabaseGetFromBackupCommand\:\:fetchDatabaseArchive\(\) has Illuminate\\Contracts\\Filesystem\\FileNotFoundException in PHPDoc @throws tag but it''s not thrown\.$#'
+			identifier: throws.unusedType
+			count: 1
+			path: src/Commands/DatabaseGetFromBackupCommand.php
+
+		-
+			message: '#^Method Jpswade\\LaravelDatabaseTools\\Commands\\DatabaseGetFromBackupCommand\:\:getFileSystem\(\) throws checked exception Illuminate\\Contracts\\Container\\BindingResolutionException but it''s missing from the PHPDoc @throws tag\.$#'
+			identifier: missingType.checkedException
+			count: 1
+			path: src/Commands/DatabaseGetFromBackupCommand.php
+
+		-
+			message: '#^Method Jpswade\\LaravelDatabaseTools\\Commands\\DatabaseGetFromBackupCommand\:\:getLatestFile\(\) throws checked exception League\\Flysystem\\FilesystemException but it''s missing from the PHPDoc @throws tag\.$#'
+			identifier: missingType.checkedException
+			count: 1
+			path: src/Commands/DatabaseGetFromBackupCommand.php
+
+		-
+			message: '#^Method Jpswade\\LaravelDatabaseTools\\Commands\\DatabaseGetFromBackupCommand\:\:normaliseListItem\(\) has parameter \$file with no value type specified in iterable type array\.$#'
+			identifier: missingType.iterableValue
+			count: 1
+			path: src/Commands/DatabaseGetFromBackupCommand.php
+
+		-
+			message: '#^Method Jpswade\\LaravelDatabaseTools\\Commands\\DatabaseGetFromBackupCommand\:\:normaliseListItem\(\) return type has no value type specified in iterable type array\.$#'
+			identifier: missingType.iterableValue
+			count: 1
+			path: src/Commands/DatabaseGetFromBackupCommand.php
+
+		-
+			message: '#^Method Jpswade\\LaravelDatabaseTools\\Commands\\DatabaseGetFromBackupCommand\:\:unzip\(\) return type has no value type specified in iterable type array\.$#'
+			identifier: missingType.iterableValue
+			count: 1
+			path: src/Commands/DatabaseGetFromBackupCommand.php
+
+		-
+			message: '#^Only booleans are allowed in an if condition, string\|null given\.$#'
+			identifier: if.condNotBoolean
+			count: 1
+			path: src/Commands/DatabaseGetFromBackupCommand.php
+
+		-
+			message: '#^Parameter \#1 \$file of method Jpswade\\LaravelDatabaseTools\\Commands\\DatabaseGetFromBackupCommand\:\:normaliseListItem\(\) expects array\|League\\Flysystem\\FileAttributes, League\\Flysystem\\StorageAttributes given\.$#'
+			identifier: argument.type
+			count: 1
+			path: src/Commands/DatabaseGetFromBackupCommand.php
+
+		-
+			message: '#^Property Jpswade\\LaravelDatabaseTools\\Commands\\DatabaseGetFromBackupCommand\:\:\$config type has no value type specified in iterable type array\.$#'
+			identifier: missingType.iterableValue
+			count: 1
+			path: src/Commands/DatabaseGetFromBackupCommand.php
+
+		-
+			message: '#^Variable method call on Illuminate\\Filesystem\\FilesystemManager\.$#'
+			identifier: method.dynamicName
+			count: 1
+			path: src/Commands/DatabaseGetFromBackupCommand.php
+
+		-
+			message: '#^Construct empty\(\) is not allowed\. Use more strict comparison\.$#'
+			identifier: empty.notAllowed
+			count: 3
+			path: src/Commands/DatabaseImportFromFileCommand.php
+
+		-
+			message: '#^Instantiated class League\\Flysystem\\FileNotFoundException not found\.$#'
+			identifier: class.notFound
+			count: 1
+			path: src/Commands/DatabaseImportFromFileCommand.php
+
+		-
+			message: '#^Method Jpswade\\LaravelDatabaseTools\\Commands\\DatabaseImportFromFileCommand\:\:checkConnection\(\) return type has no value type specified in iterable type array\.$#'
+			identifier: missingType.iterableValue
+			count: 1
+			path: src/Commands/DatabaseImportFromFileCommand.php
+
+		-
+			message: '#^Method Jpswade\\LaravelDatabaseTools\\Commands\\DatabaseImportFromFileCommand\:\:databaseImportUsingCommandLine\(\) has parameter \$connection with no value type specified in iterable type array\.$#'
+			identifier: missingType.iterableValue
+			count: 1
+			path: src/Commands/DatabaseImportFromFileCommand.php
+
+		-
+			message: '#^Method Jpswade\\LaravelDatabaseTools\\Commands\\DatabaseImportFromFileCommand\:\:getLatestSqlFile\(\) throws checked exception ValueError but it''s missing from the PHPDoc @throws tag\.$#'
+			identifier: missingType.checkedException
+			count: 1
+			path: src/Commands/DatabaseImportFromFileCommand.php
+
+		-
+			message: '#^Method Jpswade\\LaravelDatabaseTools\\Commands\\DatabaseImportFromFileCommand\:\:handle\(\) throws checked exception League\\Flysystem\\FileNotFoundException but it''s missing from the PHPDoc @throws tag\.$#'
+			identifier: missingType.checkedException
+			count: 1
+			path: src/Commands/DatabaseImportFromFileCommand.php
+
+		-
+			message: '#^Method Jpswade\\LaravelDatabaseTools\\Commands\\DatabaseImportFromFileCommand\:\:importFromFile\(\) has parameter \$connection with no value type specified in iterable type array\.$#'
+			identifier: missingType.iterableValue
+			count: 1
+			path: src/Commands/DatabaseImportFromFileCommand.php
+
+		-
+			message: '#^Only booleans are allowed in a negated boolean, mixed given\.$#'
+			identifier: booleanNot.exprNotBoolean
+			count: 2
+			path: src/Commands/DatabaseImportFromFileCommand.php
+
+		-
+			message: '#^PHPDoc tag @throws with type InvalidArgumentException\|League\\Flysystem\\FileNotFoundException is not subtype of Throwable$#'
+			identifier: throws.notThrowable
+			count: 1
+			path: src/Commands/DatabaseImportFromFileCommand.php
+
+		-
+			message: '#^Throwing object of an unknown class League\\Flysystem\\FileNotFoundException\.$#'
+			identifier: class.notFound
+			count: 1
+			path: src/Commands/DatabaseImportFromFileCommand.php
+
+		-
+			message: '#^Construct empty\(\) is not allowed\. Use more strict comparison\.$#'
+			identifier: empty.notAllowed
+			count: 2
+			path: src/Commands/DatabaseOptimizeCommand.php
+
+		-
+			message: '#^Dynamic call to static method Illuminate\\Database\\Connection\:\:select\(\)\.$#'
+			identifier: staticMethod.dynamicCall
+			count: 2
+			path: src/Commands/DatabaseOptimizeCommand.php
+
+		-
+			message: '#^Only booleans are allowed in &&, array given on the left side\.$#'
+			identifier: booleanAnd.leftNotBoolean
+			count: 1
+			path: src/Commands/DatabaseOptimizeCommand.php
+
+		-
+			message: '#^Method Jpswade\\LaravelDatabaseTools\\ServiceProvider\:\:boot\(\) has no return type specified\.$#'
+			identifier: missingType.return
+			count: 1
+			path: src/ServiceProvider.php
+
+		-
+			message: '#^Call to an undefined method Symfony\\Component\\Console\\Style\\OutputStyle\:\:info\(\)\.$#'
+			identifier: method.notFound
+			count: 5
+			path: src/Services/DatabaseCharSetService.php
+
+		-
+			message: '#^Called ''pluck'' on Laravel collection, but could have been retrieved as a query\.$#'
+			identifier: larastan.noUnnecessaryCollectionCall
+			count: 1
+			path: src/Services/DatabaseCharSetService.php
+
+		-
+			message: '#^Construct empty\(\) is not allowed\. Use more strict comparison\.$#'
+			identifier: empty.notAllowed
+			count: 3
+			path: src/Services/DatabaseCharSetService.php
+
+		-
+			message: '#^Dynamic call to static method Illuminate\\Database\\Connection\:\:table\(\)\.$#'
+			identifier: staticMethod.dynamicCall
+			count: 2
+			path: src/Services/DatabaseCharSetService.php
+
+		-
+			message: '#^Dynamic call to static method Illuminate\\Database\\Connection\:\:unprepared\(\)\.$#'
+			identifier: staticMethod.dynamicCall
+			count: 3
+			path: src/Services/DatabaseCharSetService.php
+
+		-
+			message: '#^Loose comparison via "\=\=" is not allowed\.$#'
+			identifier: equal.notAllowed
+			count: 1
+			path: src/Services/DatabaseCharSetService.php
+
+		-
+			message: '#^Method Jpswade\\LaravelDatabaseTools\\Services\\DatabaseCharSetService\:\:__invoke\(\) has no return type specified\.$#'
+			identifier: missingType.return
+			count: 1
+			path: src/Services/DatabaseCharSetService.php
+
+		-
+			message: '#^Construct empty\(\) is not allowed\. Use more strict comparison\.$#'
+			identifier: empty.notAllowed
+			count: 1
+			path: src/Services/SqliteService.php
+
+		-
+			message: '#^Implicit array creation is not allowed \- variable \$_parts might not exist\.$#'
+			identifier: variable.implicitArray
+			count: 1
+			path: src/Services/SqliteService.php
+
+		-
+			message: '#^Loose comparison via "\=\=" is not allowed\.$#'
+			identifier: equal.notAllowed
+			count: 3
+			path: src/Services/SqliteService.php
+
+		-
+			message: '#^Method Jpswade\\LaravelDatabaseTools\\Services\\SqliteService\:\:concat\(\) has parameter \$input with no type specified\.$#'
+			identifier: missingType.parameter
+			count: 1
+			path: src/Services/SqliteService.php
+
+		-
+			message: '#^Method Jpswade\\LaravelDatabaseTools\\Services\\SqliteService\:\:day\(\) has parameter \$field with no type specified\.$#'
+			identifier: missingType.parameter
+			count: 1
+			path: src/Services/SqliteService.php
+
+		-
+			message: '#^Method Jpswade\\LaravelDatabaseTools\\Services\\SqliteService\:\:hour\(\) has parameter \$time with no type specified\.$#'
+			identifier: missingType.parameter
+			count: 1
+			path: src/Services/SqliteService.php
+
+		-
+			message: '#^Method Jpswade\\LaravelDatabaseTools\\Services\\SqliteService\:\:inet_aton\(\) should return int but returns string\.$#'
+			identifier: return.type
+			count: 1
+			path: src/Services/SqliteService.php
+
+		-
+			message: '#^Method Jpswade\\LaravelDatabaseTools\\Services\\SqliteService\:\:inet_ntoa\(\) has parameter \$num with no type specified\.$#'
+			identifier: missingType.parameter
+			count: 1
+			path: src/Services/SqliteService.php
+
+		-
+			message: '#^Method Jpswade\\LaravelDatabaseTools\\Services\\SqliteService\:\:lcase\(\) has parameter \$string with no type specified\.$#'
+			identifier: missingType.parameter
+			count: 1
+			path: src/Services/SqliteService.php
+
+		-
+			message: '#^Method Jpswade\\LaravelDatabaseTools\\Services\\SqliteService\:\:regexp\(\) has parameter \$delimiter with no type specified\.$#'
+			identifier: missingType.parameter
+			count: 1
+			path: src/Services/SqliteService.php
+
+		-
+			message: '#^PHPDoc tag @param has invalid value \(double value to turn into logarithm\.\)\: Unexpected token "value", expected variable at offset 623 on line 18$#'
+			identifier: phpDoc.parseError
+			count: 1
+			path: src/Services/SqliteService.php
+
+		-
+			message: '#^PHPDoc tag @param has invalid value \(int representing the base of the logarithm, which is optional\.\)\: Unexpected token "representing", expected variable at offset 543 on line 17$#'
+			identifier: phpDoc.parseError
+			count: 1
+			path: src/Services/SqliteService.php
+
+		-
+			message: '#^PHPDoc tag @param has invalid value \(string representing the time formatted as ''00\:00\:00''\.\)\: Unexpected token "representing", expected variable at offset 80 on line 4$#'
+			identifier: phpDoc.parseError
+			count: 1
+			path: src/Services/SqliteService.php
+
+		-
+			message: '#^PHPDoc tag @param has invalid value \(string representing the time formatted as ''00\:00\:00''\.\)\: Unexpected token "representing", expected variable at offset 82 on line 4$#'
+			identifier: phpDoc.parseError
+			count: 1
+			path: src/Services/SqliteService.php
+
+		-
+			message: '#^PHPDoc tag @param has invalid value \(string\)\: Unexpected token "\\n     \* ", expected variable at offset 211 on line 8$#'
+			identifier: phpDoc.parseError
+			count: 1
+			path: src/Services/SqliteService.php
+
+		-
+			message: '#^Variable \$_parts might not be defined\.$#'
+			identifier: variable.undefined
+			count: 17
+			path: src/Services/SqliteService.php
+
+		-
+			message: '#^Called ''env'' outside of the config directory which returns null when the config is cached, use ''config''\.$#'
+			identifier: larastan.noEnvCallsOutsideOfConfig
+			count: 23
+			path: src/config/config.php
+
+		-
+			message: '#^Method Jpswade\\LaravelDatabaseTools\\Tests\\Commands\\DatabaseCreateCommandTest\:\:testCommandFailsWithInvalidConnection\(\) has no return type specified\.$#'
+			identifier: missingType.return
+			count: 1
+			path: tests/Commands/DatabaseCreateCommandTest.php
+
+		-
+			message: '#^Method Jpswade\\LaravelDatabaseTools\\Tests\\Commands\\DatabaseCreateCommandTest\:\:testCommandOutputsExpectedMessages\(\) has no return type specified\.$#'
+			identifier: missingType.return
+			count: 1
+			path: tests/Commands/DatabaseCreateCommandTest.php
+
+		-
+			message: '#^Method Jpswade\\LaravelDatabaseTools\\Tests\\Commands\\DatabaseCreateCommandTest\:\:testCommandSucceedsWithValidConnection\(\) has no return type specified\.$#'
+			identifier: missingType.return
+			count: 1
+			path: tests/Commands/DatabaseCreateCommandTest.php
+
+		-
+			message: '#^Trait Jpswade\\LaravelDatabaseTools\\Tests\\Traits\\CreatesApplication is used zero times and is not analysed\.$#'
+			identifier: trait.unused
+			count: 1
+			path: tests/Traits/CreatesApplication.php

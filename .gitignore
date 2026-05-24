@@ -1,4 +1,7 @@
 /vendor/
 /.idea/
 /.phpunit.result.cache
+/.phpunit.cache/
 /.history/
+/build/
+/:memory:

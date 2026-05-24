@@ -1,0 +1,9 @@
+{
+    "preset": "laravel",
+    "rules": {
+        "declare_strict_types": true,
+        "strict_comparison": true,
+        "is_null": true,
+        "modernize_types_casting": true
+    }
+}

@@ -18,11 +18,11 @@
         }
     ],
     "require": {
-        "php": "^7.4|^8.0|^8.1|^8.2|^8.3|^8.4",
+        "php": "^7.4|^8.0|^8.1|^8.2|^8.3|^8.4|^8.5",
         "illuminate/support": "*",
         "illuminate/console": "*",
         "illuminate/filesystem": "*",
-        "laravel/framework": "8.*|9.*|10.*|11.*|12.*",
+        "laravel/framework": "8.*|9.*|10.*|11.*|12.*|13.*",
         "ext-fileinfo": "*",
         "ext-pdo": "*",
         "ext-zip": "*"
@@ -30,7 +30,11 @@
     "require-dev": {
         "orchestra/testbench": "*",
         "squizlabs/php_codesniffer": "*",
-        "spatie/db-dumper": "*"
+        "spatie/db-dumper": "*",
+        "laravel/boost": "^2.0",
+        "jpswade/laravel-best-practices": "dev-main",
+        "larastan/larastan": "^3.0",
+        "phpstan/phpstan-strict-rules": "^2.0"
     },
     "autoload": {
         "psr-4": {
@@ -63,9 +67,18 @@
         "phpcs-baseline": [
             "./vendor/bin/phpcs --standard=phpcs.xml --report=json > phpcs-baseline.json"
         ],
+        "phpunit": [
+            "./vendor/bin/phpunit"
+        ],
+        "phpstan": [
+            "./vendor/bin/phpstan analyse --memory-limit=-1"
+        ],
         "test": [
             "@phpcs",
+            "@phpstan",
             "@phpunit"
         ]
-    }
+    },
+    "minimum-stability": "dev",
+    "prefer-stable": true
 }

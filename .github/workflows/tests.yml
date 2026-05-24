@@ -1,0 +1,85 @@
+name: Tests
+
+on:
+  push:
+    branches: [main]
+  pull_request:
+
+jobs:
+  tests:
+    runs-on: ubuntu-latest
+
+    strategy:
+      fail-fast: false
+      matrix:
+        include:
+          - php: '8.1'
+            laravel: 9
+          - php: '8.1'
+            laravel: 10
+          - php: '8.2'
+            laravel: 9
+          - php: '8.2'
+            laravel: 10
+          - php: '8.2'
+            laravel: 11
+          - php: '8.2'
+            laravel: 12
+          - php: '8.3'
+            laravel: 10
+          - php: '8.3'
+            laravel: 11
+          - php: '8.3'
+            laravel: 12
+          - php: '8.3'
+            laravel: 13
+          - php: '8.4'
+            laravel: 11
+          - php: '8.4'
+            laravel: 12
+          - php: '8.4'
+            laravel: 13
+
+    name: PHP ${{ matrix.php }} / Laravel ${{ matrix.laravel }}.x
+
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Setup PHP
+        uses: shivammathur/setup-php@v2
+        with:
+          php-version: ${{ matrix.php }}
+          extensions: fileinfo, pdo, pdo_sqlite, zip
+          coverage: none
+
+      - name: Strip dev tooling incompatible with this cell
+        # laravel/boost, jpswade/laravel-best-practices, and larastan all require
+        # PHP 8.2+ and Laravel 10+/11+. Remove them on older cells so the
+        # remaining dev deps (testbench, phpunit, phpcs) can still resolve.
+        if: matrix.php == '8.1' || matrix.laravel < 11
+        run: |
+          composer remove --dev --no-update \
+            laravel/boost \
+            jpswade/laravel-best-practices \
+            larastan/larastan \
+            phpstan/phpstan-strict-rules || true
+
+      - name: Constrain Laravel version
+        run: |
+          composer require "laravel/framework:^${{ matrix.laravel }}.0" \
+            --no-update --no-interaction
+
+      - name: Install dependencies
+        run: composer update --prefer-stable --no-interaction --no-progress
+
+      - name: Run phpcs
+        run: composer phpcs
+
+      - name: Run phpunit
+        run: composer phpunit
+
+      - name: Run phpstan
+        # PHPStan + Larastan only installed where boost/best-practices/larastan resolve.
+        if: matrix.php != '8.1' && matrix.laravel >= 11
+        run: composer phpstan

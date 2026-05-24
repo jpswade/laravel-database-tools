@@ -1,6 +1,10 @@
 # Laravel Database Tools
 
+[![Tests](https://github.com/jpswade/laravel-database-tools/actions/workflows/tests.yml/badge.svg)](https://github.com/jpswade/laravel-database-tools/actions/workflows/tests.yml)
+
 The "missing" database toolset for Laravel. A set of commonly used Database Tools for Laravel.
+
+Tested against Laravel 9-13 on PHP 8.1-8.4.
 
 With this package you can:
 
@@ -69,7 +73,7 @@ For `testing` you can add the provider to your Test:
     }
 ```
 
-In production, follow the usual [Registering Providers](https://laravel.com/docs/9.x/providers#registering-providers) instructions:
+In production, follow the usual [Registering Providers](https://laravel.com/docs/13.x/providers#registering-providers) instructions:
 
 In `config/app.php`, find the `providers` array and add:
 
@@ -91,6 +95,21 @@ These are limitations you'll come across if you use certain commands:
 * The commands have only been tested to work with MySQL at the moment, but could be extended to others.
 * The `db:importFromFile` command can only import `.sql` files.
 * The `db:optimize` command only works with MySQL (at the moment).
+
+## Contributing
+
+The package ships an opinionated dev-tooling stack alongside the test suite:
+
+* `composer phpcs` - PSR-12 style enforcement via `phpcs.xml`.
+* `composer phpunit` - test suite (Testbench + PHPUnit).
+* `composer phpstan` - static analysis at Larastan level 6, with `phpstan-strict-rules`; pre-existing issues are captured in `phpstan-baseline.neon`.
+* `composer test` - runs all three.
+
+A [Laravel Pint](https://laravel.com/docs/pint) preset is provided in `pint.json` for developers who prefer it locally; it is not wired into CI to avoid clashing with the `phpcs.xml` ruleset.
+
+This package also recommends [Laravel Boost](https://github.com/laravel/boost) and [jpswade/laravel-best-practices](https://github.com/jpswade/laravel-best-practices) for AI-assisted development. They are installed as dev dependencies and pick themselves up via `php artisan boost:install` when working on this repo from a Boost-aware editor.
+
+CI runs the test suite across the full PHP x Laravel matrix on every push and pull request - see [.github/workflows/tests.yml](.github/workflows/tests.yml).
 
 ## Troubleshooting
 
