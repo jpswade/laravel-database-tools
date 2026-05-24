@@ -9,10 +9,10 @@ use Illuminate\Support\Facades\File;
 use Illuminate\Support\Facades\Schema;
 use InvalidArgumentException;
 use Jpswade\LaravelDatabaseTools\ServiceProvider;
-use League\Flysystem\FileNotFoundException;
 use RuntimeException;
 use Symfony\Component\Console\Helper\ProgressBar;
 use Symfony\Component\Process\Process;
+use ValueError;
 
 class DatabaseImportFromFileCommand extends DatabaseCommand
 {
@@ -28,6 +28,11 @@ class DatabaseImportFromFileCommand extends DatabaseCommand
     /** @var string The console command description. */
     protected $description = 'Import data from a sql file into a database.';
 
+    /**
+     * @throws RuntimeException
+     * @throws InvalidArgumentException
+     * @throws ValueError
+     */
     public function handle(): int
     {
         $force = $this->option('force');
@@ -58,11 +63,14 @@ class DatabaseImportFromFileCommand extends DatabaseCommand
         return 0;
     }
 
+    /**
+     * @return array<string, mixed>
+     */
     private function checkConnection(): array
     {
         $connectionName = config('database.default');
         $connection = config('database.connections')[$connectionName];
-        if (! $connection['database']) {
+        if (($connection['database'] ?? '') === '') {
             throw new InvalidArgumentException('Missing Database Name');
         }
 
@@ -71,7 +79,7 @@ class DatabaseImportFromFileCommand extends DatabaseCommand
 
     private function checkMaxAllowedPacket(): void
     {
-        if (! config(ServiceProvider::CONFIG_KEY.'.import.increase_max_allowed_packet', true)) {
+        if (config(ServiceProvider::CONFIG_KEY.'.import.increase_max_allowed_packet', true) === false) {
             return;
         }
 
@@ -108,25 +116,32 @@ class DatabaseImportFromFileCommand extends DatabaseCommand
     }
 
     /**
-     * @throws InvalidArgumentException|FileNotFoundException
+     * @throws InvalidArgumentException
+     * @throws RuntimeException
+     * @throws ValueError
      */
     private function getImportFile(?string $importFile = null): string
     {
-        $importFile = empty($importFile) ? $this->getLatestSqlFile() : $importFile;
-        if (empty($importFile)) {
+        if ($importFile === null || $importFile === '') {
+            $importFile = $this->getLatestSqlFile();
+        }
+        if ($importFile === null || $importFile === '') {
             throw new InvalidArgumentException('Missing SQL file');
         }
         if (is_file($importFile) === false) {
             if (is_file(storage_path($importFile))) {
                 $importFile = storage_path($importFile);
             } else {
-                throw new FileNotFoundException($importFile);
+                throw new RuntimeException(sprintf('SQL file not found: %s', $importFile));
             }
         }
 
         return $importFile;
     }
 
+    /**
+     * @throws ValueError
+     */
     private function getLatestSqlFile(): ?string
     {
         $files = $this->getSqlFiles();
@@ -144,17 +159,27 @@ class DatabaseImportFromFileCommand extends DatabaseCommand
         $bar->setFormat(ProgressBar::FORMAT_VERBOSE);
         $bar->start();
         $handle = fopen($importFile, 'rb');
+        if ($handle === false) {
+            throw new RuntimeException("Unable to open import file: {$importFile}");
+        }
         $length = memory_get_peak_usage(true);
-        while (! feof($handle)) {
+        while (feof($handle) === false) {
             $buffer = stream_get_line($handle, $length, ';'.PHP_EOL);
+            if ($buffer === false) {
+                break;
+            }
             $bar->advance(strlen($buffer));
-            if (empty(trim($buffer)) === false) {
+            if (trim($buffer) !== '') {
                 DB::unprepared($buffer);
             }
         }
+        fclose($handle);
         $bar->finish();
     }
 
+    /**
+     * @param  array<string, mixed>  $connection
+     */
     private function databaseImportUsingCommandLine(string $importFile, array $connection): void
     {
         DB::disableQueryLog();
@@ -192,6 +217,7 @@ class DatabaseImportFromFileCommand extends DatabaseCommand
      *
      * @param  resource  $importFileHandle
      * @param  resource  $tempFileHandle
+     * @param  array<string, mixed>  $connection
      */
     protected function importFromFile($importFileHandle, $tempFileHandle, array $connection): Process
     {

@@ -22,15 +22,16 @@ class DatabaseOptimizeCommand extends DatabaseCommand
 
             return self::SUCCESS;
         }
+        $connection = $db->connection();
         $tables = $this->option('table');
         if (! is_array($tables)) {
-            $tables = $tables ? [$tables] : [];
+            $tables = $tables !== null && $tables !== '' ? [$tables] : [];
         }
-        if (empty($tables)) {
-            $tables = $db->select("SELECT TABLE_NAME FROM INFORMATION_SCHEMA.TABLES WHERE TABLE_SCHEMA = '{$database}'");
+        if ($tables === []) {
+            $tables = $connection->select("SELECT TABLE_NAME FROM INFORMATION_SCHEMA.TABLES WHERE TABLE_SCHEMA = '{$database}'");
             $tables = array_column($tables, 'TABLE_NAME');
         }
-        if (empty($tables)) {
+        if ($tables === []) {
             $this->error('No tables found');
 
             return self::FAILURE;
@@ -42,8 +43,8 @@ class DatabaseOptimizeCommand extends DatabaseCommand
         $bar = $this->output->createProgressBar(count($tables));
         $bar->setFormat(ProgressBar::FORMAT_VERBOSE);
         foreach ($tables as $table) {
-            $result = $db->select("OPTIMIZE TABLE `{$table}`");
-            if ($result && isset($result[0]->Msg_text) && $result[0]->Msg_text === 'OK') {
+            $result = $connection->select("OPTIMIZE TABLE `{$table}`");
+            if ($result !== [] && isset($result[0]->Msg_text) && $result[0]->Msg_text === 'OK') {
                 $bar->advance();
             }
         }

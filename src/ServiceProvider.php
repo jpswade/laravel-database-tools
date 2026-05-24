@@ -33,7 +33,7 @@ class ServiceProvider extends BaseProvider
         $this->mergeConfigFrom(self::CONFIG_PATH, self::CONFIG_KEY);
     }
 
-    public function boot()
+    public function boot(): void
     {
         if ($this->app->runningInConsole()) {
             $this->getPublishes();

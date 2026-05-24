@@ -10,7 +10,7 @@ use Symfony\Component\Console\Command\Command;
 
 class DatabaseCreateCommandTest extends TestCase
 {
-    public function test_command_succeeds_with_valid_connection()
+    public function test_command_succeeds_with_valid_connection(): void
     {
         Config::set('database.default', 'testing');
         $this->artisan('db:create')
@@ -18,14 +18,14 @@ class DatabaseCreateCommandTest extends TestCase
             ->assertExitCode(Command::SUCCESS);
     }
 
-    public function test_command_fails_with_invalid_connection()
+    public function test_command_fails_with_invalid_connection(): void
     {
         Config::set('database.default', 'invalid_connection');
         $this->expectException(\InvalidArgumentException::class);
         $this->artisan('db:create')->run();
     }
 
-    public function test_command_outputs_expected_messages()
+    public function test_command_outputs_expected_messages(): void
     {
         Config::set('database.default', 'testing');
         $this->artisan('db:create')

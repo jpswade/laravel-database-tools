@@ -40,7 +40,7 @@ class DatabaseDumpCommand extends DatabaseCommand
         $fields = ['host', 'port', 'database', 'username'];
         $missingFields = [];
         foreach ($fields as $field) {
-            if (empty($config[$field])) {
+            if (($config[$field] ?? '') === '') {
                 $missingFields[] = $field;
             }
         }
@@ -99,6 +99,8 @@ class DatabaseDumpCommand extends DatabaseCommand
 
     /**
      * Dump the contents of the database to the given file.
+     *
+     * @param  resource  $tempFileHandle
      */
     protected function dumpToFile(MySql $mysqlDumper, string $dumpFile, $tempFileHandle): Process
     {

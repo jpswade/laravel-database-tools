@@ -96,9 +96,12 @@ class SqliteService
         return date('Y', $t);
     }
 
-    public function day($field): string
+    public function day(string $field): string
     {
         $t = strtotime($field);
+        if ($t === false) {
+            return '';
+        }
 
         return date('j', $t);
     }
@@ -498,22 +501,15 @@ class SqliteService
      *
      * Used without an argument, it returns false. This returned value will be
      * rewritten to 0, because SQLite doesn't understand true/false value.
-     *
-     * @param  int|float  $arg1  the base of the logarithm (or the value when called with a single argument).
-     * @param  float|null  $arg2  the value to turn into a logarithm.
      */
-    public function log(): ?float
+    public function log(int|float ...$args): ?float
     {
-        $numArgs = func_num_args();
+        $numArgs = count($args);
         if ($numArgs === 1) {
-            $arg1 = func_get_arg(0);
-
-            return log($arg1);
-        } elseif ($numArgs === 2) {
-            $arg1 = func_get_arg(0);
-            $arg2 = func_get_arg(1);
-
-            return log($arg1) / log($arg2);
+            return log((float) $args[0]);
+        }
+        if ($numArgs === 2) {
+            return log((float) $args[0]) / log((float) $args[1]);
         }
 
         return null;

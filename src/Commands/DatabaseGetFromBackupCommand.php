@@ -4,13 +4,15 @@ declare(strict_types=1);
 
 namespace Jpswade\LaravelDatabaseTools\Commands;
 
-use Illuminate\Contracts\Filesystem\FileNotFoundException;
+use Illuminate\Contracts\Container\BindingResolutionException;
 use Illuminate\Filesystem\FilesystemAdapter;
 use Illuminate\Filesystem\FilesystemManager;
 use Illuminate\Support\Facades\Config;
 use InvalidArgumentException;
 use Jpswade\LaravelDatabaseTools\ServiceProvider;
 use League\Flysystem\FileAttributes;
+use League\Flysystem\FilesystemException;
+use League\Flysystem\StorageAttributes;
 use RuntimeException;
 
 class DatabaseGetFromBackupCommand extends DatabaseCommand
@@ -21,19 +23,20 @@ class DatabaseGetFromBackupCommand extends DatabaseCommand
     /** @var string The console command description. */
     protected $description = 'Get database backup file from backup.';
 
-    /** @var FilesystemAdapter */
-    private $storage;
+    private FilesystemAdapter $storage;
 
-    /** @var null|string */
-    private $backupPath = null;
+    private ?string $backupPath = null;
 
-    /** @var array */
-    private $config;
+    /** @var array<string, mixed> */
+    private array $config;
 
     /**
      * Execute the console command.
      *
-     * @throws FileNotFoundException
+     * @throws BindingResolutionException
+     * @throws FilesystemException
+     * @throws InvalidArgumentException
+     * @throws \TypeError
      */
     public function handle(Config $config): int
     {
@@ -41,11 +44,11 @@ class DatabaseGetFromBackupCommand extends DatabaseCommand
         $this->backupPath = $this->getBackupPath();
         $this->storage = $this->getFileSystem();
         $file = $this->argument('file');
-        if (empty($file) === true) {
+        if ($file === null || $file === '') {
             $file = $this->getLatestFile();
         }
         $importFile = $this->fetchDatabaseArchive($file);
-        if ($importFile) {
+        if ($importFile !== null && $importFile !== '') {
             $this->info($importFile);
         }
 
@@ -57,14 +60,17 @@ class DatabaseGetFromBackupCommand extends DatabaseCommand
      *
      * We do this dynamically, rather than use a disk instance as defined in the filesystems.php
      * configuration file directly, so that we can switch between buckets easily.
+     *
+     * @throws BindingResolutionException
+     * @throws InvalidArgumentException
      */
     private function getFileSystem(): FilesystemAdapter
     {
         $config = $this->config['filesystem'];
-        if (empty($config['driver'])) {
+        if (($config['driver'] ?? '') === '') {
             throw new InvalidArgumentException('Does not have a configured driver.');
         }
-        if (empty($config['bucket'])) {
+        if (($config['bucket'] ?? '') === '') {
             throw new InvalidArgumentException('Does not have a configured bucket.');
         }
         $name = $config['driver'];
@@ -74,22 +80,27 @@ class DatabaseGetFromBackupCommand extends DatabaseCommand
         }
         $filesystem = app()->make('filesystem');
 
-        return $filesystem->{$driverMethod}($config);
+        return $filesystem->{$driverMethod}($config); // @phpstan-ignore method.dynamicName
     }
 
+    /**
+     * @throws FilesystemException
+     */
     private function getLatestFile(): string
     {
         $backupPath = $this->backupPath;
-        $list = iterator_to_array($this->storage->listContents($backupPath), false);
-        if (empty($list)) {
+        $list = iterator_to_array($this->storage->listContents($backupPath), false); // @phpstan-ignore staticMethod.dynamicCall
+        if ($list === []) {
             throw new RuntimeException('No files available at '.$backupPath);
         }
         $files = collect($list)
-            ->map(fn ($file) => $this->normaliseListItem($file))
+            ->map(fn (StorageAttributes $file): ?array => $this->normaliseListItem($file))
             ->filter();
-        $files = $files->sortBy('timestamp')->reject(function (array $file) {
-            return in_array(strtolower($file['extension']), [self::ZIP_EXTENSION, self::SQL_EXTENSION], true) === false;
-        });
+        $files = $files->sortBy('timestamp')->reject(fn (array $file): bool => in_array(
+            strtolower($file['extension']),
+            [self::ZIP_EXTENSION, self::SQL_EXTENSION],
+            true
+        ) === false);
         $file = $files->last();
         if ($file === null) {
             throw new RuntimeException('Unable to get latest file');
@@ -99,9 +110,9 @@ class DatabaseGetFromBackupCommand extends DatabaseCommand
     }
 
     /**
-     * @param  array|FileAttributes  $file
+     * @return array{basename: string, extension: string, timestamp: int}|null
      */
-    private function normaliseListItem($file): ?array
+    private function normaliseListItem(StorageAttributes $file): ?array
     {
         if ($file instanceof FileAttributes) {
             $path = $file->path();
@@ -111,28 +122,13 @@ class DatabaseGetFromBackupCommand extends DatabaseCommand
             return [
                 'basename' => $basename,
                 'extension' => $extension,
-                'timestamp' => (int) ($file->lastModified() ?? 0),
-            ];
-        }
-
-        if (is_array($file)) {
-            $basename = $file['basename'] ?? basename((string) ($file['path'] ?? ''));
-            $extension = $file['extension'] ?? pathinfo($basename, PATHINFO_EXTENSION);
-            $timestamp = (int) ($file['timestamp'] ?? 0);
-
-            return [
-                'basename' => $basename,
-                'extension' => $extension,
-                'timestamp' => $timestamp,
+                'timestamp' => $file->lastModified() ?? 0,
             ];
         }
 
         return null;
     }
 
-    /**
-     * @throws FileNotFoundException
-     */
     private function fetchDatabaseArchive(?string $filename = null): ?string
     {
         $backupPath = $this->backupPath;
@@ -175,18 +171,21 @@ class DatabaseGetFromBackupCommand extends DatabaseCommand
     private function getBackupPath(): string
     {
         $config = $this->config;
-        if (empty($config['filesystem']['path']) === false) {
+        if (($config['filesystem']['path'] ?? '') !== '') {
             return $config['filesystem']['path'];
         }
         $backupConfig = Config::get('backup');
         $backupPath = $backupConfig['backup']['name'];
-        if (empty($backupPath)) {
+        if (($backupPath ?? '') === '') {
             throw new InvalidArgumentException('Unable to get backup config, have you configured `spatie/laravel-backup`?');
         }
 
         return $backupPath;
     }
 
+    /**
+     * @return list<string>
+     */
     private function unzip(string $filename): array
     {
         $this->execUnzip($filename);

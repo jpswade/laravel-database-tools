@@ -27,12 +27,17 @@ class DatabaseCommand extends Command
     /** @var string */
     public const ZIP_EXTENSION = 'zip';
 
-    protected function getSqlFiles()
+    /**
+     * @return list<string>
+     */
+    protected function getSqlFiles(): array
     {
         $filePath = self::SQL_FILE_PATTERN;
         $storageFilePath = $this->getDumpPath($filePath);
 
-        return glob($storageFilePath);
+        $files = glob($storageFilePath);
+
+        return $files === false ? [] : $files;
     }
 
     protected function getDumpPath(string $filePath = ''): string
