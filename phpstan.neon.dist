@@ -22,6 +22,11 @@ parameters:
     # CI cells resolve different spatie/db-dumper versions; an ignore that
     # matches on db-dumper 3.x will be unused on db-dumper 4.x and vice versa.
     reportUnmatchedIgnoredErrors: false
+    # This package ships its config at src/config/ (it gets published into a
+    # consumer's config/). Tell Larastan to treat src/config as a config
+    # directory so env() calls there don't trip larastan.noEnvCallsOutsideOfConfig.
+    configDirectories:
+        - src/config
     exceptions:
         check:
             missingCheckedExceptionInThrows: true

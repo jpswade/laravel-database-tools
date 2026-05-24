@@ -120,8 +120,8 @@ class SqliteService
     /**
      * Method to emulate MySQL SECOND() function.
      *
-     * @param string representing the time formatted as '00:00:00'.
-     * @return int of unsigned integer
+     * @param  string  $field  time formatted as '00:00:00'.
+     * @return int unsigned integer
      */
     public function second(string $field): int
     {
@@ -146,9 +146,9 @@ class SqliteService
     /**
      * Method to emulate MySQL HOUR() function.
      *
-     * @param string representing the time formatted as '00:00:00'.
+     * @param  string  $time  time formatted as '00:00:00'.
      */
-    public function hour($time): int
+    public function hour(string $time): int
     {
         [$hours, $minutes, $seconds] = explode(':', $time);
 
@@ -264,10 +264,14 @@ class SqliteService
     {
         $interval = trim(substr(trim($interval), 8));
         $parts = explode(' ', $interval);
+        $_parts = [];
         foreach ($parts as $part) {
-            if (! empty($part)) {
+            if ($part !== '') {
                 $_parts[] = $part;
             }
+        }
+        if ($_parts === []) {
+            return null;
         }
         $type = strtolower(end($_parts));
         switch ($type) {
@@ -435,12 +439,12 @@ class SqliteService
      * @param  string  $pattern  regular expression to match.
      * @return int 1 if matched, 0 if not matched.
      */
-    public function regexp(string $field, string $pattern, $delimiter = '/'): int
+    public function regexp(string $field, string $pattern, string $delimiter = '/'): int
     {
         $pattern = str_replace($delimiter, '\\'.$delimiter, $pattern);
         $pattern = $delimiter.$pattern.$delimiter.'i';
 
-        return preg_match($pattern, $field);
+        return (int) preg_match($pattern, $field);
     }
 
     /**
@@ -449,7 +453,7 @@ class SqliteService
      * SQLite does have CONCAT() function, but it has a different syntax from MySQL.
      * So this function must be manipulated here.
      */
-    public function concat(...$input): string
+    public function concat(string ...$input): string
     {
         return implode('', $input);
     }
@@ -495,11 +499,10 @@ class SqliteService
      * Used without an argument, it returns false. This returned value will be
      * rewritten to 0, because SQLite doesn't understand true/false value.
      *
-     * @param int representing the base of the logarithm, which is optional.
-     * @param float value to turn into logarithm.
-     * @return float|null
+     * @param  int|float  $arg1  the base of the logarithm (or the value when called with a single argument).
+     * @param  float|null  $arg2  the value to turn into a logarithm.
      */
-    public function log()
+    public function log(): ?float
     {
         $numArgs = func_num_args();
         if ($numArgs === 1) {
@@ -580,10 +583,10 @@ class SqliteService
      * This is MySQL alias for lower() function. This function rewrites it
      * to SQLite compatible name lower().
      *
-     * @param string
+     * @param  string  $string  the SQL expression to wrap.
      * @return string SQLite compatible function name.
      */
-    public function lcase($string)
+    public function lcase(string $string): string
     {
         return "lower($string)";
     }
@@ -593,9 +596,9 @@ class SqliteService
      *
      * This function gets 4 or 8 bytes int and turn it into the network address.
      */
-    public function inet_ntoa($num): string
+    public function inet_ntoa(int|string $num): string
     {
-        return long2ip($num);
+        return long2ip((int) $num);
     }
 
     /**
@@ -607,7 +610,7 @@ class SqliteService
     {
         $int_data = ip2long($address);
 
-        return sprintf('%u', $int_data);
+        return (int) sprintf('%u', $int_data);
     }
 
     /**

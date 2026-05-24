@@ -1,5 +1,15 @@
 parameters:
 	ignoreErrors:
+		# spatie/db-dumper 3.x returns DbDumper from chained setters where 4.x
+		# returns static (MySql). When CI resolves db-dumper 3.x for older PHP
+		# cells, PHPStan loses sight of the MySql-only skipLockTables(). The
+		# call is correct at runtime regardless.
+		-
+			message: '#^Call to an undefined method Spatie\\DbDumper\\DbDumper\:\:skipLockTables\(\)\.$#'
+			identifier: method.notFound
+			count: 1
+			path: src/Commands/DatabaseDumpCommand.php
+
 		-
 			message: '#^Method Jpswade\\LaravelDatabaseTools\\Commands\\DatabaseCommand\:\:getSqlFiles\(\) has no return type specified\.$#'
 			identifier: missingType.return
@@ -21,16 +31,6 @@ parameters:
 		-
 			message: '#^Construct empty\(\) is not allowed\. Use more strict comparison\.$#'
 			identifier: empty.notAllowed
-			count: 1
-			path: src/Commands/DatabaseDumpCommand.php
-
-		# spatie/db-dumper 3.x returns DbDumper from chained setters where 4.x
-		# returns static (MySql). When CI resolves db-dumper 3.x for older
-		# Laravel cells, PHPStan loses sight of the MySql-only skipLockTables().
-		# The call is correct at runtime regardless.
-		-
-			message: '#^Call to an undefined method Spatie\\DbDumper\\DbDumper\:\:skipLockTables\(\)\.$#'
-			identifier: method.notFound
 			count: 1
 			path: src/Commands/DatabaseDumpCommand.php
 
@@ -239,100 +239,22 @@ parameters:
 			path: src/Services/DatabaseCharSetService.php
 
 		-
-			message: '#^Construct empty\(\) is not allowed\. Use more strict comparison\.$#'
-			identifier: empty.notAllowed
-			count: 1
-			path: src/Services/SqliteService.php
-
-		-
-			message: '#^Implicit array creation is not allowed \- variable \$_parts might not exist\.$#'
-			identifier: variable.implicitArray
-			count: 1
-			path: src/Services/SqliteService.php
-
-		-
-			message: '#^Method Jpswade\\LaravelDatabaseTools\\Services\\SqliteService\:\:concat\(\) has parameter \$input with no type specified\.$#'
-			identifier: missingType.parameter
-			count: 1
-			path: src/Services/SqliteService.php
-
-		-
 			message: '#^Method Jpswade\\LaravelDatabaseTools\\Services\\SqliteService\:\:day\(\) has parameter \$field with no type specified\.$#'
 			identifier: missingType.parameter
 			count: 1
 			path: src/Services/SqliteService.php
 
 		-
-			message: '#^Method Jpswade\\LaravelDatabaseTools\\Services\\SqliteService\:\:hour\(\) has parameter \$time with no type specified\.$#'
-			identifier: missingType.parameter
+			message: '#^PHPDoc tag @param references unknown parameter\: \$arg1$#'
+			identifier: parameter.notFound
 			count: 1
 			path: src/Services/SqliteService.php
 
 		-
-			message: '#^Method Jpswade\\LaravelDatabaseTools\\Services\\SqliteService\:\:inet_aton\(\) should return int but returns string\.$#'
-			identifier: return.type
+			message: '#^PHPDoc tag @param references unknown parameter\: \$arg2$#'
+			identifier: parameter.notFound
 			count: 1
 			path: src/Services/SqliteService.php
-
-		-
-			message: '#^Method Jpswade\\LaravelDatabaseTools\\Services\\SqliteService\:\:inet_ntoa\(\) has parameter \$num with no type specified\.$#'
-			identifier: missingType.parameter
-			count: 1
-			path: src/Services/SqliteService.php
-
-		-
-			message: '#^Method Jpswade\\LaravelDatabaseTools\\Services\\SqliteService\:\:lcase\(\) has parameter \$string with no type specified\.$#'
-			identifier: missingType.parameter
-			count: 1
-			path: src/Services/SqliteService.php
-
-		-
-			message: '#^Method Jpswade\\LaravelDatabaseTools\\Services\\SqliteService\:\:regexp\(\) has parameter \$delimiter with no type specified\.$#'
-			identifier: missingType.parameter
-			count: 1
-			path: src/Services/SqliteService.php
-
-		-
-			message: '#^PHPDoc tag @param has invalid value \(float value to turn into logarithm\.\)\: Unexpected token "value", expected variable at offset 622 on line 18$#'
-			identifier: phpDoc.parseError
-			count: 1
-			path: src/Services/SqliteService.php
-
-		-
-			message: '#^PHPDoc tag @param has invalid value \(int representing the base of the logarithm, which is optional\.\)\: Unexpected token "representing", expected variable at offset 543 on line 17$#'
-			identifier: phpDoc.parseError
-			count: 1
-			path: src/Services/SqliteService.php
-
-		-
-			message: '#^PHPDoc tag @param has invalid value \(string representing the time formatted as ''00\:00\:00''\.\)\: Unexpected token "representing", expected variable at offset 80 on line 4$#'
-			identifier: phpDoc.parseError
-			count: 1
-			path: src/Services/SqliteService.php
-
-		-
-			message: '#^PHPDoc tag @param has invalid value \(string representing the time formatted as ''00\:00\:00''\.\)\: Unexpected token "representing", expected variable at offset 82 on line 4$#'
-			identifier: phpDoc.parseError
-			count: 1
-			path: src/Services/SqliteService.php
-
-		-
-			message: '#^PHPDoc tag @param has invalid value \(string\)\: Unexpected token "\\n     \* ", expected variable at offset 211 on line 8$#'
-			identifier: phpDoc.parseError
-			count: 1
-			path: src/Services/SqliteService.php
-
-		-
-			message: '#^Variable \$_parts might not be defined\.$#'
-			identifier: variable.undefined
-			count: 17
-			path: src/Services/SqliteService.php
-
-		-
-			message: '#^Called ''env'' outside of the config directory which returns null when the config is cached, use ''config''\.$#'
-			identifier: larastan.noEnvCallsOutsideOfConfig
-			count: 23
-			path: src/config/config.php
 
 		-
 			message: '#^Method Jpswade\\LaravelDatabaseTools\\Tests\\Commands\\DatabaseCreateCommandTest\:\:test_command_fails_with_invalid_connection\(\) has no return type specified\.$#'

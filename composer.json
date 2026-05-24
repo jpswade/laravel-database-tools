@@ -30,7 +30,7 @@
     "require-dev": {
         "orchestra/testbench": "*",
         "laravel/pint": "^1.27",
-        "spatie/db-dumper": "*",
+        "spatie/db-dumper": "^3.8 || ^4.0",
         "laravel/boost": "^2.0",
         "jpswade/laravel-best-practices": "dev-main",
         "larastan/larastan": "^3.0",
