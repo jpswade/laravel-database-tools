@@ -24,6 +24,16 @@ parameters:
 			count: 1
 			path: src/Commands/DatabaseDumpCommand.php
 
+		# spatie/db-dumper 3.x returns DbDumper from chained setters where 4.x
+		# returns static (MySql). When CI resolves db-dumper 3.x for older
+		# Laravel cells, PHPStan loses sight of the MySql-only skipLockTables().
+		# The call is correct at runtime regardless.
+		-
+			message: '#^Call to an undefined method Spatie\\DbDumper\\DbDumper\:\:skipLockTables\(\)\.$#'
+			identifier: method.notFound
+			count: 1
+			path: src/Commands/DatabaseDumpCommand.php
+
 		-
 			message: '#^Method Jpswade\\LaravelDatabaseTools\\Commands\\DatabaseDumpCommand\:\:dumpToFile\(\) has parameter \$tempFileHandle with no type specified\.$#'
 			identifier: missingType.parameter

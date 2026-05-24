@@ -19,6 +19,9 @@ parameters:
         - src
         - tests
     treatPhpDocTypesAsCertain: false
+    # CI cells resolve different spatie/db-dumper versions; an ignore that
+    # matches on db-dumper 3.x will be unused on db-dumper 4.x and vice versa.
+    reportUnmatchedIgnoredErrors: false
     exceptions:
         check:
             missingCheckedExceptionInThrows: true
