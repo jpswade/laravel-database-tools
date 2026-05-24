@@ -1,0 +1,17 @@
+{
+    "agents": [
+        "cursor",
+        "claude_code",
+        "codex"
+    ],
+    "guidelines": true,
+    "mcp": false,
+    "packages": [
+        "jpswade/laravel-best-practices"
+    ],
+    "skills": [
+        "laravel-best-practices",
+        "laravel-best-practices-overlay",
+        "tdd-bug-fixing"
+    ]
+}

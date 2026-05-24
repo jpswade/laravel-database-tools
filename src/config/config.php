@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 return [
     'database' => [
         'driver' => env('DB_CONNECTION_SOURCE', env('DB_CONNECTION', 'mysql')),

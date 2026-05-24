@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 namespace Jpswade\LaravelDatabaseTools\Tests\Commands;
 
 use Illuminate\Support\Facades\Config;
@@ -8,7 +10,7 @@ use Symfony\Component\Console\Command\Command;
 
 class DatabaseCreateCommandTest extends TestCase
 {
-    public function testCommandSucceedsWithValidConnection()
+    public function test_command_succeeds_with_valid_connection()
     {
         Config::set('database.default', 'testing');
         $this->artisan('db:create')
@@ -16,14 +18,14 @@ class DatabaseCreateCommandTest extends TestCase
             ->assertExitCode(Command::SUCCESS);
     }
 
-    public function testCommandFailsWithInvalidConnection()
+    public function test_command_fails_with_invalid_connection()
     {
         Config::set('database.default', 'invalid_connection');
         $this->expectException(\InvalidArgumentException::class);
         $this->artisan('db:create')->run();
     }
 
-    public function testCommandOutputsExpectedMessages()
+    public function test_command_outputs_expected_messages()
     {
         Config::set('database.default', 'testing');
         $this->artisan('db:create')

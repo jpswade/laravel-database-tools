@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 namespace Jpswade\LaravelDatabaseTools\Commands;
 
 use Illuminate\Support\Facades\File;
@@ -29,11 +31,12 @@ class DatabaseDumpCommand extends DatabaseCommand
 
     /**
      * Execute the console command.
+     *
      * @throws DumpFailed
      */
     public function handle(): int
     {
-        $config = config(ServiceProvider::CONFIG_KEY . '.database');
+        $config = config(ServiceProvider::CONFIG_KEY.'.database');
         $fields = ['host', 'port', 'database', 'username'];
         $missingFields = [];
         foreach ($fields as $field) {
@@ -42,7 +45,8 @@ class DatabaseDumpCommand extends DatabaseCommand
             }
         }
         if (count($missingFields) > 0) {
-            $this->error('Missing configuration fields: ' . implode(', ', $missingFields));
+            $this->error('Missing configuration fields: '.implode(', ', $missingFields));
+
             return self::FAILURE;
         }
         $host = $config['host'];
@@ -78,17 +82,18 @@ class DatabaseDumpCommand extends DatabaseCommand
             $bar->advance($size);
         }
         $bar->finish();
-        if (!$process->isSuccessful()) {
+        if (! $process->isSuccessful()) {
             throw DumpFailed::processDidNotEndSuccessfully($process);
         }
-        if (!file_exists($outputFile)) {
+        if (! file_exists($outputFile)) {
             throw DumpFailed::dumpfileWasNotCreated($process);
         }
         if (filesize($outputFile) === 0) {
             throw DumpFailed::dumpfileWasEmpty($process);
         }
-        $message = 'Created MySql Dump outputFile: ' . $outputFile;
+        $message = 'Created MySql Dump outputFile: '.$outputFile;
         $this->info($message);
+
         return self::SUCCESS;
     }
 
@@ -100,12 +105,13 @@ class DatabaseDumpCommand extends DatabaseCommand
         fwrite($tempFileHandle, $mysqlDumper->getContentsOfCredentialsFile());
         $temporaryCredentialsFile = stream_get_meta_data($tempFileHandle)['uri'];
         $command = $mysqlDumper->getDumpCommand($dumpFile, $temporaryCredentialsFile);
+
         return Process::fromShellCommandline($command, null, null, null, self::TIMEOUT);
     }
 
     private function checkFilePathExists(string $directory): void
     {
-        if (!is_dir($directory)) {
+        if (! is_dir($directory)) {
             mkdir($directory, 0755, true);
         }
     }

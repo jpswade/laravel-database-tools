@@ -223,12 +223,6 @@ parameters:
 			path: src/Services/DatabaseCharSetService.php
 
 		-
-			message: '#^Loose comparison via "\=\=" is not allowed\.$#'
-			identifier: equal.notAllowed
-			count: 1
-			path: src/Services/DatabaseCharSetService.php
-
-		-
 			message: '#^Method Jpswade\\LaravelDatabaseTools\\Services\\DatabaseCharSetService\:\:__invoke\(\) has no return type specified\.$#'
 			identifier: missingType.return
 			count: 1
@@ -244,12 +238,6 @@ parameters:
 			message: '#^Implicit array creation is not allowed \- variable \$_parts might not exist\.$#'
 			identifier: variable.implicitArray
 			count: 1
-			path: src/Services/SqliteService.php
-
-		-
-			message: '#^Loose comparison via "\=\=" is not allowed\.$#'
-			identifier: equal.notAllowed
-			count: 3
 			path: src/Services/SqliteService.php
 
 		-
@@ -295,7 +283,7 @@ parameters:
 			path: src/Services/SqliteService.php
 
 		-
-			message: '#^PHPDoc tag @param has invalid value \(double value to turn into logarithm\.\)\: Unexpected token "value", expected variable at offset 623 on line 18$#'
+			message: '#^PHPDoc tag @param has invalid value \(float value to turn into logarithm\.\)\: Unexpected token "value", expected variable at offset 622 on line 18$#'
 			identifier: phpDoc.parseError
 			count: 1
 			path: src/Services/SqliteService.php
@@ -337,19 +325,19 @@ parameters:
 			path: src/config/config.php
 
 		-
-			message: '#^Method Jpswade\\LaravelDatabaseTools\\Tests\\Commands\\DatabaseCreateCommandTest\:\:testCommandFailsWithInvalidConnection\(\) has no return type specified\.$#'
+			message: '#^Method Jpswade\\LaravelDatabaseTools\\Tests\\Commands\\DatabaseCreateCommandTest\:\:test_command_fails_with_invalid_connection\(\) has no return type specified\.$#'
 			identifier: missingType.return
 			count: 1
 			path: tests/Commands/DatabaseCreateCommandTest.php
 
 		-
-			message: '#^Method Jpswade\\LaravelDatabaseTools\\Tests\\Commands\\DatabaseCreateCommandTest\:\:testCommandOutputsExpectedMessages\(\) has no return type specified\.$#'
+			message: '#^Method Jpswade\\LaravelDatabaseTools\\Tests\\Commands\\DatabaseCreateCommandTest\:\:test_command_outputs_expected_messages\(\) has no return type specified\.$#'
 			identifier: missingType.return
 			count: 1
 			path: tests/Commands/DatabaseCreateCommandTest.php
 
 		-
-			message: '#^Method Jpswade\\LaravelDatabaseTools\\Tests\\Commands\\DatabaseCreateCommandTest\:\:testCommandSucceedsWithValidConnection\(\) has no return type specified\.$#'
+			message: '#^Method Jpswade\\LaravelDatabaseTools\\Tests\\Commands\\DatabaseCreateCommandTest\:\:test_command_succeeds_with_valid_connection\(\) has no return type specified\.$#'
 			identifier: missingType.return
 			count: 1
 			path: tests/Commands/DatabaseCreateCommandTest.php

@@ -54,12 +54,14 @@ jobs:
           coverage: none
 
       - name: Strip dev tooling incompatible with this cell
-        # laravel/boost, jpswade/laravel-best-practices, and larastan all require
-        # PHP 8.2+ and Laravel 10+/11+. Remove them on older cells so the
-        # remaining dev deps (testbench, phpunit, phpcs) can still resolve.
+        # laravel/pint, laravel/boost, jpswade/laravel-best-practices, and
+        # larastan all require PHP 8.2+ (pint, boost, larastan) and Laravel 10+
+        # (best-practices) or 11+ (boost). Remove them on older cells so the
+        # remaining dev deps (testbench, phpunit, db-dumper) can still resolve.
         if: matrix.php == '8.1' || matrix.laravel < 11
         run: |
           composer remove --dev --no-update \
+            laravel/pint \
             laravel/boost \
             jpswade/laravel-best-practices \
             larastan/larastan \
@@ -73,8 +75,10 @@ jobs:
       - name: Install dependencies
         run: composer update --prefer-stable --no-interaction --no-progress
 
-      - name: Run phpcs
-        run: composer phpcs
+      - name: Check formatting (Pint)
+        # Pint requires PHP 8.2+, so only run on cells where it resolved.
+        if: matrix.php != '8.1'
+        run: composer pint-test
 
       - name: Run phpunit
         run: composer phpunit

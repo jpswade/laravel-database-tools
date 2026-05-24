@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 namespace Jpswade\LaravelDatabaseTools;
 
 use Illuminate\Database\DatabaseManager;

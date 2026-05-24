@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 namespace Jpswade\LaravelDatabaseTools;
 
 use Illuminate\Support\ServiceProvider as BaseProvider;
@@ -24,7 +26,7 @@ class ServiceProvider extends BaseProvider
     ];
 
     /** @var string */
-    public const CONFIG_PATH = __DIR__ . '/config/config.php';
+    public const CONFIG_PATH = __DIR__.'/config/config.php';
 
     public function register()
     {
@@ -42,7 +44,7 @@ class ServiceProvider extends BaseProvider
     private function getPublishes(): void
     {
         $this->publishes([
-            self::CONFIG_PATH => config_path(self::CONFIG_KEY . '.php'),
+            self::CONFIG_PATH => config_path(self::CONFIG_KEY.'.php'),
         ], 'config');
     }
 

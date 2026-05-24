@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 namespace Jpswade\LaravelDatabaseTools\Commands;
 
 use Illuminate\Config\Repository;
@@ -8,6 +10,7 @@ use InvalidArgumentException;
 
 /**
  * Creates the database schema.
+ *
  * @see https://github.com/laravel/framework/issues/19412
  */
 class DatabaseCreateCommand extends DatabaseCommand
@@ -34,8 +37,8 @@ class DatabaseCreateCommand extends DatabaseCommand
         $this->info('Creating database if it does not exist...');
         $connectionName = $config->get('database.default');
         $connections = $config->get('database.connections');
-        if (!isset($connections[$connectionName])) {
-            throw new InvalidArgumentException('Invalid database connection: ' . $connectionName);
+        if (! isset($connections[$connectionName])) {
+            throw new InvalidArgumentException('Invalid database connection: '.$connectionName);
         }
         $connection = $connections[$connectionName];
         $schemaName = $connection['database'];
@@ -49,6 +52,7 @@ class DatabaseCreateCommand extends DatabaseCommand
         $builder->createDatabase($schemaName);
         $config->set(["database.connections.{$connectionName}.database" => $schemaName]);
         $this->info('Done');
+
         return self::SUCCESS;
     }
 }

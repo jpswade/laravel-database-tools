@@ -1,13 +1,15 @@
 <?php
 
+declare(strict_types=1);
+
 namespace Jpswade\LaravelDatabaseTools\Commands;
 
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\File;
+use Illuminate\Support\Facades\Schema;
 use InvalidArgumentException;
 use Jpswade\LaravelDatabaseTools\ServiceProvider;
 use League\Flysystem\FileNotFoundException;
-use Illuminate\Support\Facades\Schema;
 use RuntimeException;
 use Symfony\Component\Console\Helper\ProgressBar;
 use Symfony\Component\Process\Process;
@@ -40,17 +42,19 @@ class DatabaseImportFromFileCommand extends DatabaseCommand
             $importFile = $this->getImportFile($importFile);
         } catch (\Exception $e) {
             $this->error($e->getMessage());
+
             return self::FAILURE;
         }
         $env = strtoupper(app()->environment());
         $message = sprintf('[%s] Starting import from %s to %s@%s:%s/%s in %d seconds', $env, $importFile, $connection['username'], $connection['host'], $connection['port'], $connection['database'], self::SECONDS_DELAY);
         $this->comment($message);
         self::wait();
-        if (config(ServiceProvider::CONFIG_KEY . '.import.method') === 'command') {
+        if (config(ServiceProvider::CONFIG_KEY.'.import.method') === 'command') {
             $this->databaseImportUsingCommandLine($importFile, $connection);
         } else {
             $this->databaseImport($importFile);
         }
+
         return 0;
     }
 
@@ -58,27 +62,28 @@ class DatabaseImportFromFileCommand extends DatabaseCommand
     {
         $connectionName = config('database.default');
         $connection = config('database.connections')[$connectionName];
-        if (!$connection['database']) {
+        if (! $connection['database']) {
             throw new InvalidArgumentException('Missing Database Name');
         }
+
         return $connection;
     }
 
     private function checkMaxAllowedPacket(): void
     {
-        if (!config(ServiceProvider::CONFIG_KEY . '.import.increase_max_allowed_packet', true)) {
+        if (! config(ServiceProvider::CONFIG_KEY.'.import.increase_max_allowed_packet', true)) {
             return;
         }
 
         $query = "SHOW VARIABLES LIKE 'max_allowed_packet'";
         $result = DB::select($query);
-        $value = (int)$result[0]->Value;
+        $value = (int) $result[0]->Value;
         if ($value < self::MAX_ALLOWED_PACKET) {
             $this->warn(sprintf('Max allowed packet is %d, lower than expected increasing to %d', $value, self::MAX_ALLOWED_PACKET));
-            $query = 'SET GLOBAL max_allowed_packet=' . self::MAX_ALLOWED_PACKET;
+            $query = 'SET GLOBAL max_allowed_packet='.self::MAX_ALLOWED_PACKET;
             $result = DB::unprepared($query);
             if ($result) {
-                $this->comment('Max allowed packet was increased to ' . self::MAX_ALLOWED_PACKET);
+                $this->comment('Max allowed packet was increased to '.self::MAX_ALLOWED_PACKET);
             } else {
                 throw new RuntimeException('Unable to increase max allowed packet.');
             }
@@ -118,6 +123,7 @@ class DatabaseImportFromFileCommand extends DatabaseCommand
                 throw new FileNotFoundException($importFile);
             }
         }
+
         return $importFile;
     }
 
@@ -126,6 +132,7 @@ class DatabaseImportFromFileCommand extends DatabaseCommand
         $files = $this->getSqlFiles();
         $files = array_combine(array_map('filemtime', $files), $files);
         krsort($files);
+
         return array_shift($files);
     }
 
@@ -138,8 +145,8 @@ class DatabaseImportFromFileCommand extends DatabaseCommand
         $bar->start();
         $handle = fopen($importFile, 'rb');
         $length = memory_get_peak_usage(true);
-        while (!feof($handle)) {
-            $buffer = stream_get_line($handle, $length, ';' . PHP_EOL);
+        while (! feof($handle)) {
+            $buffer = stream_get_line($handle, $length, ';'.PHP_EOL);
             $bar->advance(strlen($buffer));
             if (empty(trim($buffer)) === false) {
                 DB::unprepared($buffer);
@@ -175,7 +182,7 @@ class DatabaseImportFromFileCommand extends DatabaseCommand
         }
         $bar->finish();
         fclose($fileHandle);
-        if (!$process->isSuccessful()) {
+        if (! $process->isSuccessful()) {
             throw new RuntimeException("The import process failed with exitcode {$process->getExitCode()} : {$process->getExitCodeText()} : {$process->getErrorOutput()}");
         }
     }
@@ -183,10 +190,8 @@ class DatabaseImportFromFileCommand extends DatabaseCommand
     /**
      * Import the contents of the database to the database.
      *
-     * @param resource $importFileHandle
-     * @param resource $tempFileHandle
-     * @param array $connection
-     * @return Process
+     * @param  resource  $importFileHandle
+     * @param  resource  $tempFileHandle
      */
     protected function importFromFile($importFileHandle, $tempFileHandle, array $connection): Process
     {
@@ -211,6 +216,7 @@ class DatabaseImportFromFileCommand extends DatabaseCommand
         $command = implode(' ', $command);
         $process = Process::fromShellCommandline($command);
         $process->setInput($importFileHandle);
+
         return $process;
     }
 }

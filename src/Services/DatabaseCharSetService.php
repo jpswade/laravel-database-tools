@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 namespace Jpswade\LaravelDatabaseTools\Services;
 
 use Illuminate\Database\DatabaseManager;
@@ -8,6 +10,7 @@ use Symfony\Component\Console\Style\OutputStyle;
 
 /**
  * Updates the database tables to the charset and collation that you have configured.
+ *
  * @see https://gist.github.com/NBZ4live/04d5981eaf0244b57d0296b381e04195
  */
 class DatabaseCharSetService
@@ -40,7 +43,7 @@ class DatabaseCharSetService
             $columnType = $column->COLUMN_TYPE;
 
             $null = 'DEFAULT NULL';
-            if ($column->IS_NULLABLE == 'NO') {
+            if ($column->IS_NULLABLE === 'NO') {
                 $null = 'NOT NULL';
             }
 

@@ -29,7 +29,7 @@
     },
     "require-dev": {
         "orchestra/testbench": "*",
-        "squizlabs/php_codesniffer": "*",
+        "laravel/pint": "^1.27",
         "spatie/db-dumper": "*",
         "laravel/boost": "^2.0",
         "jpswade/laravel-best-practices": "dev-main",
@@ -58,14 +58,11 @@
         "spatie/db-dumper": "Needed by the db:dump command."
     },
     "scripts": {
-        "phpcs": [
-            "./vendor/bin/phpcs --standard=phpcs.xml"
+        "pint": [
+            "./vendor/bin/pint"
         ],
-        "phpcbf": [
-            "./vendor/bin/phpcbf --standard=phpcs.xml"
-        ],
-        "phpcs-baseline": [
-            "./vendor/bin/phpcs --standard=phpcs.xml --report=json > phpcs-baseline.json"
+        "pint-test": [
+            "./vendor/bin/pint --test"
         ],
         "phpunit": [
             "./vendor/bin/phpunit"
@@ -74,7 +71,7 @@
             "./vendor/bin/phpstan analyse --memory-limit=-1"
         ],
         "test": [
-            "@phpcs",
+            "@pint-test",
             "@phpstan",
             "@phpunit"
         ]

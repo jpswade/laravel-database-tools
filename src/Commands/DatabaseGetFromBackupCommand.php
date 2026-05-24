@@ -1,7 +1,10 @@
 <?php
 
+declare(strict_types=1);
+
 namespace Jpswade\LaravelDatabaseTools\Commands;
 
+use Illuminate\Contracts\Filesystem\FileNotFoundException;
 use Illuminate\Filesystem\FilesystemAdapter;
 use Illuminate\Filesystem\FilesystemManager;
 use Illuminate\Support\Facades\Config;
@@ -18,7 +21,7 @@ class DatabaseGetFromBackupCommand extends DatabaseCommand
     /** @var string The console command description. */
     protected $description = 'Get database backup file from backup.';
 
-    /** @var FilesystemAdapter $storage */
+    /** @var FilesystemAdapter */
     private $storage;
 
     /** @var null|string */
@@ -30,7 +33,7 @@ class DatabaseGetFromBackupCommand extends DatabaseCommand
     /**
      * Execute the console command.
      *
-     * @throws \Illuminate\Contracts\Filesystem\FileNotFoundException
+     * @throws FileNotFoundException
      */
     public function handle(Config $config): int
     {
@@ -45,6 +48,7 @@ class DatabaseGetFromBackupCommand extends DatabaseCommand
         if ($importFile) {
             $this->info($importFile);
         }
+
         return self::SUCCESS;
     }
 
@@ -64,11 +68,12 @@ class DatabaseGetFromBackupCommand extends DatabaseCommand
             throw new InvalidArgumentException('Does not have a configured bucket.');
         }
         $name = $config['driver'];
-        $driverMethod = 'create' . ucfirst($name) . 'Driver';
+        $driverMethod = 'create'.ucfirst($name).'Driver';
         if (method_exists(FilesystemManager::class, $driverMethod) === false) {
             throw new InvalidArgumentException("Driver [{$name}] is not supported.");
         }
         $filesystem = app()->make('filesystem');
+
         return $filesystem->{$driverMethod}($config);
     }
 
@@ -77,7 +82,7 @@ class DatabaseGetFromBackupCommand extends DatabaseCommand
         $backupPath = $this->backupPath;
         $list = iterator_to_array($this->storage->listContents($backupPath), false);
         if (empty($list)) {
-            throw new RuntimeException('No files available at '. $backupPath);
+            throw new RuntimeException('No files available at '.$backupPath);
         }
         $files = collect($list)
             ->map(fn ($file) => $this->normaliseListItem($file))
@@ -89,11 +94,12 @@ class DatabaseGetFromBackupCommand extends DatabaseCommand
         if ($file === null) {
             throw new RuntimeException('Unable to get latest file');
         }
+
         return $file['basename'];
     }
 
     /**
-     * @param array|FileAttributes $file
+     * @param  array|FileAttributes  $file
      */
     private function normaliseListItem($file): ?array
     {
@@ -125,15 +131,16 @@ class DatabaseGetFromBackupCommand extends DatabaseCommand
     }
 
     /**
-     * @throws \Illuminate\Contracts\Filesystem\FileNotFoundException
+     * @throws FileNotFoundException
      */
-    private function fetchDatabaseArchive(string $filename = null): ?string
+    private function fetchDatabaseArchive(?string $filename = null): ?string
     {
         $backupPath = $this->backupPath;
         $path = implode(DIRECTORY_SEPARATOR, [$backupPath, $filename]);
         $file = $this->getTargetFile($filename);
         if (file_exists($file) === true) {
             $this->warn("File '$file' already exists.'");
+
             return $file;
         }
         if (file_exists($path) === true) {
@@ -144,6 +151,7 @@ class DatabaseGetFromBackupCommand extends DatabaseCommand
             $size = $storage->size($path);
             if ($size === 0) {
                 $this->error(sprintf('Unable to continue, file %s is empty.', $path));
+
                 return null;
             }
             $this->info(sprintf("Getting '%s', %d bytes", $filename, $size));
@@ -160,6 +168,7 @@ class DatabaseGetFromBackupCommand extends DatabaseCommand
             $files = $this->unzip($filePath);
             $file = array_shift($files);
         }
+
         return $file;
     }
 
@@ -174,6 +183,7 @@ class DatabaseGetFromBackupCommand extends DatabaseCommand
         if (empty($backupPath)) {
             throw new InvalidArgumentException('Unable to get backup config, have you configured `spatie/laravel-backup`?');
         }
+
         return $backupPath;
     }
 
@@ -186,18 +196,21 @@ class DatabaseGetFromBackupCommand extends DatabaseCommand
             $this->info("Renaming '$unzippedFileName' to '$filename'...");
             rename($unzippedFile, $filename);
         }
+
         return $this->getSqlFiles();
     }
 
     private function getTargetFile(?string $filename): string
     {
-        $importFilename = pathinfo($filename, PATHINFO_FILENAME) . '.' . self::SQL_EXTENSION;
+        $importFilename = pathinfo($filename, PATHINFO_FILENAME).'.'.self::SQL_EXTENSION;
+
         return $this->storagePath($importFilename);
     }
 
     private function getExtension(string $basename): string
     {
         $array = explode('.', $basename);
+
         return array_pop($array);
     }
 

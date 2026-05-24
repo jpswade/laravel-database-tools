@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 namespace Jpswade\LaravelDatabaseTools\Services;
 
 use DateInterval;
@@ -60,13 +62,17 @@ class SqliteService
         'utc_date' => 'utc_date',
         'utc_time' => 'utc_time',
         'utc_timestamp' => 'utc_timestamp',
-        'version' => 'version'
+        'version' => 'version',
     ];
 
     const MYSQL_COMPATIBILITY_VERSION = '5.6';
-    const MYSQL_PHP_DATE_FORMATS = ['%a' => 'D', '%b' => 'M', '%c' => 'n', '%D' => 'jS', '%d' => 'd', '%e' => 'j', '%H' => 'H', '%h' => 'h', '%I' => 'h', '%i' => 'i', '%j' => 'z', '%k' => 'G', '%l' => 'g', '%M' => 'F', '%m' => 'm', '%p' => 'A', '%r' => 'h:i:s A', '%S' => 's', '%s' => 's', '%T' => self::MYSQL_TIME_FORMAT, '%U' => 'W', '%u' => 'W', '%V' => 'W', '%v' => 'W', '%W' => 'l', '%w' => 'w', '%X' => 'Y', '%x' => 'o', '%Y' => 'Y', '%y' => 'y',];
+
+    const MYSQL_PHP_DATE_FORMATS = ['%a' => 'D', '%b' => 'M', '%c' => 'n', '%D' => 'jS', '%d' => 'd', '%e' => 'j', '%H' => 'H', '%h' => 'h', '%I' => 'h', '%i' => 'i', '%j' => 'z', '%k' => 'G', '%l' => 'g', '%M' => 'F', '%m' => 'm', '%p' => 'A', '%r' => 'h:i:s A', '%S' => 's', '%s' => 's', '%T' => self::MYSQL_TIME_FORMAT, '%U' => 'W', '%u' => 'W', '%V' => 'W', '%v' => 'W', '%W' => 'l', '%w' => 'w', '%X' => 'Y', '%x' => 'o', '%Y' => 'Y', '%y' => 'y'];
+
     const MYSQL_DATETIME_FORMAT = 'Y-m-d H:i:s';
+
     const MYSQL_DATE_FORMAT = 'Y-m-d';
+
     const MYSQL_TIME_FORMAT = 'H:i:s';
 
     public function __construct(PDO $pdo)
@@ -79,18 +85,21 @@ class SqliteService
     public function month(string $field): string
     {
         $t = strtotime($field);
+
         return date('n', $t);
     }
 
     public function year(string $field): string
     {
         $t = strtotime($field);
+
         return date('Y', $t);
     }
 
     public function day($field): string
     {
         $t = strtotime($field);
+
         return date('j', $t);
     }
 
@@ -101,8 +110,7 @@ class SqliteService
      * from '1970-01-01 00:00:00' GMT). Used with the argument, it changes the value
      * to the timestamp.
      *
-     * @param ?string $field representing the date formatted as '0000-00-00 00:00:00'.
-     * @return int
+     * @param  ?string  $field  representing the date formatted as '0000-00-00 00:00:00'.
      */
     public function unix_timestamp(?string $field = null): ?int
     {
@@ -118,43 +126,46 @@ class SqliteService
     public function second(string $field): int
     {
         $time = strtotime($field);
-        return (int)date('s', $time);
+
+        return (int) date('s', $time);
     }
 
     /**
      * Method to emulate MySQL MINUTE() function.
      *
-     * @param string $field representing the time formatted as '00:00:00'.
+     * @param  string  $field  representing the time formatted as '00:00:00'.
      * @return int of unsigned integer
      */
     public function minute(string $field): int
     {
         $t = strtotime($field);
-        return (int)date('i', $t);
+
+        return (int) date('i', $t);
     }
 
     /**
      * Method to emulate MySQL HOUR() function.
      *
      * @param string representing the time formatted as '00:00:00'.
-     * @return int
      */
     public function hour($time): int
     {
-        list($hours, $minutes, $seconds) = explode(':', $time);
-        return (int)$hours;
+        [$hours, $minutes, $seconds] = explode(':', $time);
+
+        return (int) $hours;
     }
 
     /**
      * Method to emulate MySQL FROM_UNIXTIME() function.
      *
-     * @param int $field of unix timestamp
-     * @param ?string $format to indicate the way of formatting(optional)
+     * @param  int  $field  of unix timestamp
+     * @param  ?string  $format  to indicate the way of formatting(optional)
      * @return string formatted as '0000-00-00 00:00:00'.
      */
     public function from_unixtime(int $field, ?string $format = null): string
     {
         $date = date(self::MYSQL_DATETIME_FORMAT, $field);
+
         return $format === null ? $date : $this->dateformat($date, $format);
     }
 
@@ -166,6 +177,7 @@ class SqliteService
         $mysql_php_date_formats = self::MYSQL_PHP_DATE_FORMATS;
         $t = strtotime($date);
         $format = strtr($format, $mysql_php_date_formats);
+
         return date($format, $t);
     }
 
@@ -206,7 +218,7 @@ class SqliteService
      * This function rewrites the function name to SQLite compatible substr(),
      * which can manipulate UTF-8 characters.
      */
-    public function substring(string $text, int $pos, int $len = null): string
+    public function substring(string $text, int $pos, ?int $len = null): string
     {
         return "substr($text, $pos, $len)";
     }
@@ -225,23 +237,27 @@ class SqliteService
         $interval = $this->deriveInterval($interval);
         switch (strtolower($date)) {
             case 'curdate()':
-                $objDate = new Datetime($this->curdate());
+                $objDate = new DateTime($this->curdate());
                 $objDate->add(new DateInterval($interval));
+
                 return $objDate->format(self::MYSQL_DATE_FORMAT);
             case 'now()':
-                $objDate = new Datetime($this->now());
+                $objDate = new DateTime($this->now());
                 $objDate->add(new DateInterval($interval));
+
                 return $objDate->format(self::MYSQL_DATETIME_FORMAT);
             default:
-                $objDate = new Datetime($date);
+                $objDate = new DateTime($date);
                 $objDate->add(new DateInterval($interval));
+
                 return $objDate->format(self::MYSQL_DATETIME_FORMAT);
         }
     }
 
     /**
      * Method to calculate the interval time between two dates value.
-     * @param string $interval white space separated expression.
+     *
+     * @param  string  $interval  white space separated expression.
      * @return string representing the time to add or subtract.
      */
     private function deriveInterval(string $interval): ?string
@@ -249,7 +265,7 @@ class SqliteService
         $interval = trim(substr(trim($interval), 8));
         $parts = explode(' ', $interval);
         foreach ($parts as $part) {
-            if (!empty($part)) {
+            if (! empty($part)) {
                 $_parts[] = $part;
             }
         }
@@ -257,50 +273,65 @@ class SqliteService
         switch ($type) {
             case 'second':
                 $unit = 'S';
-                return 'PT' . $_parts[0] . $unit;
+
+                return 'PT'.$_parts[0].$unit;
             case 'minute':
                 $unit = 'M';
-                return 'PT' . $_parts[0] . $unit;
+
+                return 'PT'.$_parts[0].$unit;
             case 'hour':
                 $unit = 'H';
-                return 'PT' . $_parts[0] . $unit;
+
+                return 'PT'.$_parts[0].$unit;
             case 'day':
                 $unit = 'D';
-                return 'P' . $_parts[0] . $unit;
+
+                return 'P'.$_parts[0].$unit;
             case 'week':
                 $unit = 'W';
-                return 'P' . $_parts[0] . $unit;
+
+                return 'P'.$_parts[0].$unit;
             case 'month':
                 $unit = 'M';
-                return 'P' . $_parts[0] . $unit;
+
+                return 'P'.$_parts[0].$unit;
             case 'year':
                 $unit = 'Y';
-                return 'P' . $_parts[0] . $unit;
+
+                return 'P'.$_parts[0].$unit;
             case 'minute_second':
-                list($minutes, $seconds) = explode(':', $_parts[0]);
-                return 'PT' . $minutes . 'M' . $seconds . 'S';
+                [$minutes, $seconds] = explode(':', $_parts[0]);
+
+                return 'PT'.$minutes.'M'.$seconds.'S';
             case 'hour_second':
-                list($hours, $minutes, $seconds) = explode(':', $_parts[0]);
-                return 'PT' . $hours . 'H' . $minutes . 'M' . $seconds . 'S';
+                [$hours, $minutes, $seconds] = explode(':', $_parts[0]);
+
+                return 'PT'.$hours.'H'.$minutes.'M'.$seconds.'S';
             case 'hour_minute':
-                list($hours, $minutes) = explode(':', $_parts[0]);
-                return 'PT' . $hours . 'H' . $minutes . 'M';
+                [$hours, $minutes] = explode(':', $_parts[0]);
+
+                return 'PT'.$hours.'H'.$minutes.'M';
             case 'day_second':
-                $days = intval($_parts[0]);
-                list($hours, $minutes, $seconds) = explode(':', $_parts[1]);
-                return 'P' . $days . 'D' . 'T' . $hours . 'H' . $minutes . 'M' . $seconds . 'S';
+                $days = (int) ($_parts[0]);
+                [$hours, $minutes, $seconds] = explode(':', $_parts[1]);
+
+                return 'P'.$days.'D'.'T'.$hours.'H'.$minutes.'M'.$seconds.'S';
             case 'day_minute':
-                $days = intval($_parts[0]);
-                list($hours, $minutes) = explode(':', $parts[1]);
-                return 'P' . $days . 'D' . 'T' . $hours . 'H' . $minutes . 'M';
+                $days = (int) ($_parts[0]);
+                [$hours, $minutes] = explode(':', $parts[1]);
+
+                return 'P'.$days.'D'.'T'.$hours.'H'.$minutes.'M';
             case 'day_hour':
-                $days = intval($_parts[0]);
-                $hours = intval($_parts[1]);
-                return 'P' . $days . 'D' . 'T' . $hours . 'H';
+                $days = (int) ($_parts[0]);
+                $hours = (int) ($_parts[1]);
+
+                return 'P'.$days.'D'.'T'.$hours.'H';
             case 'year_month':
-                list($years, $months) = explode('-', $_parts[0]);
-                return 'P' . $years . 'Y' . $months . 'M';
+                [$years, $months] = explode('-', $_parts[0]);
+
+                return 'P'.$years.'Y'.$months.'M';
         }
+
         return null;
     }
 
@@ -331,9 +362,10 @@ class SqliteService
      * $interval is a single quoted strings rewritten by SQLiteQueryDriver::rewrite_query().
      * It is calculated in the private function deriveInterval().
      *
-     * @param string $date representing the start date.
-     * @param string $interval representing the expression of the time to subtract.
+     * @param  string  $date  representing the start date.
+     * @param  string  $interval  representing the expression of the time to subtract.
      * @return string date formatted as '0000-00-00 00:00:00'.
+     *
      * @throws Exception
      */
     public function date_sub(string $date, string $interval): string
@@ -341,16 +373,19 @@ class SqliteService
         $interval = $this->deriveInterval($interval);
         switch (strtolower($date)) {
             case 'curdate()':
-                $objDate = new Datetime($this->curdate());
+                $objDate = new DateTime($this->curdate());
                 $objDate->sub(new DateInterval($interval));
+
                 return $objDate->format(self::MYSQL_DATE_FORMAT);
             case 'now()':
-                $objDate = new Datetime($this->now());
+                $objDate = new DateTime($this->now());
                 $objDate->sub(new DateInterval($interval));
+
                 return $objDate->format(self::MYSQL_DATETIME_FORMAT);
             default:
-                $objDate = new Datetime($date);
+                $objDate = new DateTime($date);
                 $objDate->sub(new DateInterval($interval));
+
                 return $objDate->format(self::MYSQL_DATETIME_FORMAT);
         }
     }
@@ -358,7 +393,7 @@ class SqliteService
     /**
      * Method to emulate MySQL DATE() function.
      *
-     * @param string $date formatted as unix time.
+     * @param  string  $date  formatted as unix time.
      * @return string formatted as '0000-00-00'.
      */
     public function date(string $date): string
@@ -371,8 +406,7 @@ class SqliteService
      *
      * This function returns true if the argument is null, and true if not.
      *
-     * @param mixed $field
-     * @return boolean
+     * @param  mixed  $field
      */
     public function isnull($field): bool
     {
@@ -384,27 +418,28 @@ class SqliteService
      *
      * As 'IF' is a reserved word for PHP, function name must be changed.
      *
-     * @param mixed $expression the statement to be evaluated as true or false.
-     * @param mixed $true statement or value returned if $expression is true.
-     * @param mixed $false statement or value returned if $expression is false.
+     * @param  mixed  $expression  the statement to be evaluated as true or false.
+     * @param  mixed  $true  statement or value returned if $expression is true.
+     * @param  mixed  $false  statement or value returned if $expression is false.
      * @return mixed
      */
     public function php_if($expression, $true, $false)
     {
-        return ($expression == true) ? $true : $false;
+        return ($expression === true) ? $true : $false;
     }
 
     /**
      * Method to emulate MySQL REGEXP() function.
      *
-     * @param string $field haystack
-     * @param string $pattern regular expression to match.
-     * @return integer 1 if matched, 0 if not matched.
+     * @param  string  $field  haystack
+     * @param  string  $pattern  regular expression to match.
+     * @return int 1 if matched, 0 if not matched.
      */
     public function regexp(string $field, string $pattern, $delimiter = '/'): int
     {
-        $pattern = str_replace($delimiter, '\\' . $delimiter, $pattern);
-        $pattern = $delimiter . $pattern . $delimiter . 'i';
+        $pattern = str_replace($delimiter, '\\'.$delimiter, $pattern);
+        $pattern = $delimiter.$pattern.$delimiter.'i';
+
         return preg_match($pattern, $field);
     }
 
@@ -440,6 +475,7 @@ class SqliteService
                 return $i + 1;
             }
         }
+
         return 0;
     }
 
@@ -460,20 +496,23 @@ class SqliteService
      * rewritten to 0, because SQLite doesn't understand true/false value.
      *
      * @param int representing the base of the logarithm, which is optional.
-     * @param double value to turn into logarithm.
-     * @return double|null
+     * @param float value to turn into logarithm.
+     * @return float|null
      */
     public function log()
     {
         $numArgs = func_num_args();
-        if ($numArgs == 1) {
+        if ($numArgs === 1) {
             $arg1 = func_get_arg(0);
+
             return log($arg1);
-        } else if ($numArgs == 2) {
+        } elseif ($numArgs === 2) {
             $arg1 = func_get_arg(0);
             $arg2 = func_get_arg(1);
+
             return log($arg1) / log($arg2);
         }
+
         return null;
     }
 
@@ -486,6 +525,7 @@ class SqliteService
     {
         $arg_list = func_get_args();
         $list = implode(',', $arg_list);
+
         return "min($list)";
     }
 
@@ -498,6 +538,7 @@ class SqliteService
     {
         $arg_list = func_get_args();
         $list = implode(',', $arg_list);
+
         return "max($list)";
     }
 
@@ -565,6 +606,7 @@ class SqliteService
     public function inet_aton(string $address): int
     {
         $int_data = ip2long($address);
+
         return sprintf('%u', $int_data);
     }
 
@@ -572,6 +614,7 @@ class SqliteService
      * Method to emulate MySQL DATEDIFF() function.
      *
      * This function compares two dates value and returns the difference.
+     *
      * @throws Exception
      */
     public function datediff(string $start, string $end): string
@@ -579,6 +622,7 @@ class SqliteService
         $start_date = new DateTime($start);
         $end_date = new DateTime($end);
         $interval = $end_date->diff($start_date, false);
+
         return $interval->format('%r%a');
     }
 
@@ -595,11 +639,13 @@ class SqliteService
             if (($val = mb_strpos($str, $substr, $pos)) !== false) {
                 return $val + 1;
             }
+
             return 0;
         }
         if (($val = strpos($str, $substr, $pos)) !== false) {
             return $val + 1;
         }
+
         return 0;
     }
 

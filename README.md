@@ -100,14 +100,13 @@ These are limitations you'll come across if you use certain commands:
 
 The package ships an opinionated dev-tooling stack alongside the test suite:
 
-* `composer phpcs` - PSR-12 style enforcement via `phpcs.xml`.
+* `composer pint` - applies [Laravel Pint](https://laravel.com/docs/pint) formatting (Laravel preset + `declare_strict_types`, `strict_comparison`, `is_null`, `modernize_types_casting`). Config lives in `pint.json`.
+* `composer pint-test` - the read-only equivalent used by CI; fails if anything needs reformatting.
 * `composer phpunit` - test suite (Testbench + PHPUnit).
-* `composer phpstan` - static analysis at Larastan level 6, with `phpstan-strict-rules`; pre-existing issues are captured in `phpstan-baseline.neon`.
-* `composer test` - runs all three.
+* `composer phpstan` - static analysis at Larastan level 6 with `phpstan-strict-rules`; pre-existing issues are captured in `phpstan-baseline.neon`.
+* `composer test` - runs Pint (test mode), PHPStan, then PHPUnit.
 
-A [Laravel Pint](https://laravel.com/docs/pint) preset is provided in `pint.json` for developers who prefer it locally; it is not wired into CI to avoid clashing with the `phpcs.xml` ruleset.
-
-This package also recommends [Laravel Boost](https://github.com/laravel/boost) and [jpswade/laravel-best-practices](https://github.com/jpswade/laravel-best-practices) for AI-assisted development. They are installed as dev dependencies and pick themselves up via `php artisan boost:install` when working on this repo from a Boost-aware editor.
+This package also installs [Laravel Boost](https://github.com/laravel/boost) and [jpswade/laravel-best-practices](https://github.com/jpswade/laravel-best-practices) as dev dependencies for AI-assisted development. The committed `boost.json` opts contributors into the relevant skills for Cursor, Claude Code, and Codex; run `php artisan boost:install --no-interaction` after `composer install` to materialise those skills into your editor's agent directory. Contributors using a different editor can override locally - `boost.json` is the maintainer default, not a hard requirement.
 
 CI runs the test suite across the full PHP x Laravel matrix on every push and pull request - see [.github/workflows/tests.yml](.github/workflows/tests.yml).
 

@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 namespace Jpswade\LaravelDatabaseTools\Commands;
 
 use Illuminate\Database\DatabaseManager;
@@ -8,6 +10,7 @@ use Symfony\Component\Console\Helper\ProgressBar;
 class DatabaseOptimizeCommand extends DatabaseCommand
 {
     protected $signature = 'db:optimize {--database=default} {--table=*}';
+
     protected $description = 'Optimizes database tables';
 
     public function handle(DatabaseManager $db): int
@@ -16,10 +19,11 @@ class DatabaseOptimizeCommand extends DatabaseCommand
         $driver = config("database.connections.{$database}.driver");
         if ($driver !== 'mysql') {
             $this->info('Optimization is only supported for MySQL databases.');
+
             return self::SUCCESS;
         }
         $tables = $this->option('table');
-        if (!is_array($tables)) {
+        if (! is_array($tables)) {
             $tables = $tables ? [$tables] : [];
         }
         if (empty($tables)) {
@@ -28,6 +32,7 @@ class DatabaseOptimizeCommand extends DatabaseCommand
         }
         if (empty($tables)) {
             $this->error('No tables found');
+
             return self::FAILURE;
         }
         $env = strtoupper(app()->environment());
@@ -43,7 +48,8 @@ class DatabaseOptimizeCommand extends DatabaseCommand
             }
         }
         $bar->finish();
-        $this->info(PHP_EOL . 'Optimization Completed');
+        $this->info(PHP_EOL.'Optimization Completed');
+
         return self::SUCCESS;
     }
 }
