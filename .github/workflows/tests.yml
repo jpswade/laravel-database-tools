@@ -14,11 +14,7 @@ jobs:
       matrix:
         include:
           - php: '8.1'
-            laravel: 9
-          - php: '8.1'
             laravel: 10
-          - php: '8.2'
-            laravel: 9
           - php: '8.2'
             laravel: 10
           - php: '8.2'
@@ -76,8 +72,9 @@ jobs:
         run: composer update --prefer-stable --no-interaction --no-progress
 
       - name: Check formatting (Pint)
-        # Pint requires PHP 8.2+, so only run on cells where it resolved.
-        if: matrix.php != '8.1'
+        # Pint is stripped alongside boost on L10 cells (boost needs L11+),
+        # so only run where the modern dev tooling resolved.
+        if: matrix.php != '8.1' && matrix.laravel >= 11
         run: composer pint-test
 
       - name: Run phpunit

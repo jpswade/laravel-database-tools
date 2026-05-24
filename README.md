@@ -4,7 +4,7 @@
 
 The "missing" database toolset for Laravel. A set of commonly used Database Tools for Laravel.
 
-Tested against Laravel 9-13 on PHP 8.1-8.4.
+Tested against Laravel 10-13 on PHP 8.1-8.4.
 
 With this package you can:
 
