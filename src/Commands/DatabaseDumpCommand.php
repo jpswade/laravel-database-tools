@@ -60,14 +60,7 @@ class DatabaseDumpCommand extends DatabaseCommand
         $outputFile = $this->getDumpPath($filename);
         $message = sprintf('[%s] Starting fetching from %s@%s:%d/%s to %s', $env, $userName, $host, $port, $schemaName, $outputFile);
         $this->info($message);
-        $mysqlDumper = MySql::create()
-            ->setHost($host)
-            ->setPort($port)
-            ->setDbName($schemaName)
-            ->setUserName($userName)
-            ->setPassword($password)
-            ->skipLockTables()
-            ->addExtraOption('--no-tablespaces');
+        $mysqlDumper = $this->makeDumper($host, $port, $schemaName, $userName, $password);
 
         $tempFileHandle = tmpfile();
         $this->checkFilePathExists(dirname($outputFile));
@@ -95,6 +88,24 @@ class DatabaseDumpCommand extends DatabaseCommand
         $this->info($message);
 
         return self::SUCCESS;
+    }
+
+    /**
+     * Build a MySql dumper configured with the supplied connection details.
+     *
+     * Extracted as a seam so tests can override it to capture the arguments
+     * without spawning a real mysqldump subprocess.
+     */
+    protected function makeDumper(string $host, int $port, string $database, string $username, string $password): MySql
+    {
+        return MySql::create()
+            ->setHost($host)
+            ->setPort($port)
+            ->setDbName($database)
+            ->setUserName($username)
+            ->setPassword($password)
+            ->skipLockTables()
+            ->addExtraOption('--no-tablespaces');
     }
 
     /**
