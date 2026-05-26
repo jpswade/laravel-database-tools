@@ -49,11 +49,11 @@ class DatabaseDumpCommand extends DatabaseCommand
 
             return self::FAILURE;
         }
-        $host = $config['host'];
-        $port = $config['port'];
-        $schemaName = $config['database'];
-        $userName = $config['username'];
-        $password = $config['password'];
+        $host = (string) $config['host'];
+        $port = (int) $config['port'];
+        $schemaName = (string) $config['database'];
+        $userName = (string) $config['username'];
+        $password = (string) ($config['password'] ?? '');
         $env = strtoupper(config('app.env'));
         $nowTime = now()->format('YmdHis');
         $filename = sprintf('%s-%s.sql', $schemaName, $nowTime);
