@@ -239,6 +239,11 @@ class DatabaseImportFromFileCommand extends DatabaseCommand
         ];
         $command[] = $connection['database'];
         $command[] = '--binary-mode';
+        // The dump file's own `SET FOREIGN_KEY_CHECKS=0` is not always honoured early
+        // enough by MariaDB to allow a CREATE TABLE that references a not-yet-created
+        // table (mysqldump emits tables alphabetically). Disabling at session start
+        // via --init-command guarantees the import succeeds regardless of order.
+        $command[] = '--init-command="SET SESSION FOREIGN_KEY_CHECKS=0; SET SESSION UNIQUE_CHECKS=0"';
         $command = implode(' ', $command);
         $process = Process::fromShellCommandline($command);
         $process->setInput($importFileHandle);
