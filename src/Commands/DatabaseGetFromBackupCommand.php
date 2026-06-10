@@ -216,7 +216,10 @@ class DatabaseGetFromBackupCommand extends DatabaseCommand
     private function execUnzip(string $filename): void
     {
         $sourceFile = $filename[0] === DIRECTORY_SEPARATOR ? $filename : $this->storagePath($filename);
-        exec(sprintf('unzip %s -d %s', $sourceFile, $this->storagePath()));
+        // -o forces overwrite of any existing extracted file without prompting.
+        // Without it, re-runs (or downloads of archives whose contents already exist
+        // on disk) deadlock because unzip awaits an interactive answer on stdin.
+        exec(sprintf('unzip -o %s -d %s', $sourceFile, $this->storagePath()));
     }
 
     private function isZipFile(string $file): bool
