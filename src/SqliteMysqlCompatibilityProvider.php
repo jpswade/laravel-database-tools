@@ -6,6 +6,7 @@ namespace Jpswade\LaravelDatabaseTools;
 
 use Illuminate\Database\DatabaseManager;
 use Illuminate\Support\ServiceProvider;
+use Throwable;
 
 class SqliteMysqlCompatibilityProvider extends ServiceProvider
 {
@@ -21,7 +22,11 @@ class SqliteMysqlCompatibilityProvider extends ServiceProvider
         $databaseManager = app(DatabaseManager::class);
         $connections = $databaseManager->getConnections();
         foreach ($connections as $connection) {
-            self::setUpSqlite($connection);
+            try {
+                self::setUpSqlite($connection);
+            } catch (Throwable) {
+                // Best-effort during bootstrap (e.g. package:discover before database.sqlite exists).
+            }
         }
     }
 }
